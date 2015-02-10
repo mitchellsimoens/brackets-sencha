@@ -1,0 +1,37 @@
+<div id="brackets-sencha" class="brackets-sencha bottom-panel">
+    <div class="toolbar">
+        <div class="row-fluid">
+            <div class="span2">
+                <label class="title">Sencha Cmd Output</label>
+            </div>
+            <a href="#" class="clear">clear</a>
+            <a href="#" class="close">&times;</a>
+        </div>
+    </div>
+    <div class="brackets-sencha-content"></div>
+</div>
+
+<style>
+    .brackets-sencha-content {
+        height   : calc(100% - 57px);
+        overflow : auto;
+        padding  : 10px;
+    }
+
+    .brackets-sencha-complete {
+        margin-top  : 10px;
+        font-weight : bold;
+    }
+
+    .brackets-sencha-command {
+        margin-bottom : 10px;
+        font-weight   : bold;
+    }
+
+    .clear {
+        position   : absolute;
+        right      : 30px;
+        top        : 50%;
+        margin-top : -10px;
+    }
+</style>

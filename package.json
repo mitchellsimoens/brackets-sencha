@@ -1,0 +1,12 @@
+{
+    "name": "mitchellsimoens.brackets-sencha",
+    "title": "Sencha",
+    "description": "Extension to integrate Sencha products into Brackets.",
+    "homepage": "https://github.com/mitchellsimoens/brackets-sencha",
+    "version": "0.0.1",
+    "author": "Mitchell Simoens <mitchell.simoens@sencha.com> (http://www.sencha.com)",
+    "license": "MIT",
+    "engines": {
+        "brackets": ">=0.24.0"
+    }
+}
