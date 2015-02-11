@@ -8,5 +8,15 @@
     "license": "MIT",
     "engines": {
         "brackets": ">=0.24.0"
-    }
+    },
+    "contributors": [
+        {
+            "name": "Mitchell Simoens",
+            "url": "https://github.com/mitchellsimoens"
+        },
+        {
+            "name": "Joel Watson",
+            "url": "https://github.com/joelwatson"
+        }
+    ]
 }
