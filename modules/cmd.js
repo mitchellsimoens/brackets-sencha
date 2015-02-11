@@ -15,22 +15,51 @@ define(function(require, exports) {
         prefs              = PreferencesManager.getExtensionPrefs('brackets-sencha'),
         _outputPanel, _command;
 
-    var commands = {
-        empty : function() {},
-        app   : {
-            refresh : function() {
-                _handleCmdCommand('sencha app refresh');
-            }
+    var commands = [
+        {
+            cmd  : 'sencha.cmd',
+            label: '** Sencha Cmd **',
+            fn   : function() {}
         },
-        build : {
-            production : function() {
-                _handleCmdCommand('sencha app build production');
-            },
-            testing    : function() {
-                _handleCmdCommand('sencha app build testing');
-            }
+        {
+            label: 'app',
+            children: [
+                {
+                    cmd  : 'sencha.cmd.app.refresh',
+                    label: 'app refresh',
+                    fn   : function() {
+                        _handleCmdCommand('sencha app refresh');
+                    }
+                },
+                {
+                    cmd  : 'sencha.cmd.app.watch',
+                    label: 'app watch',
+                    fn   : function() {
+                        _handleCmdCommand('sencha app watch');
+                    }
+                }
+            ]
+        },
+        {
+            label: 'build',
+            children: [
+                {
+                    cmd  : 'sencha.cmd.build.production',
+                    label: 'build [production]',
+                    fn   : function() {
+                        _handleCmdCommand('sencha app build production');
+                    }
+                },
+                {
+                    cmd  : 'sencha.cmd.build.testing',
+                    label: 'build [testing]',
+                    fn   : function() {
+                        _handleCmdCommand('sencha app build testing');
+                    }
+                }
+            ]
         }
-    };
+    ];
 
     function _getSenchaCfg(Dir, callback) {
         if (Dir.isDirectory) {
@@ -165,25 +194,53 @@ define(function(require, exports) {
             }
         })
     }
-
-    function initCommands() {
-        CommandManager.register('** Sencha Cmd **',   'sencha.cmd',                  commands.empty           );
-        CommandManager.register('build [production]', 'sencha.cmd.build.production', commands.build.production);
-        CommandManager.register('build [testing]',    'sencha.cmd.build.testing',    commands.build.testing   );
-        CommandManager.register('app refresh',        'sencha.cmd.app.refresh',      commands.app.refresh     );
+    
+    /**
+     * Recursively build out commands from pre-defined structure
+     */
+    function _registerCommands( cmds ) {
+        var i      = 0,
+            length = cmds.length,
+            item;
+        
+        for (; i < length; i++) {
+            item = cmds[i];
+            if( item.cmd && item.label && item.fn ) {
+                CommandManager.register(item.label, item.cmd, item.fn );
+            }
+            if( item.children && item.children.length ) {
+                _registerCommands( item.children );
+            }
+        }
+    }
+    
+    /**
+     * Recursively build out menus from pre-defined structure
+     */
+    function _registerMenuItems( menu, menuItems ) {
+        var i      = 0,
+            length = menuItems.length,
+            item;
+        
+        for (; i < length; i++) {
+            item = menuItems[i];
+            if( item.cmd ) {
+                menu.addMenuItem(item.cmd);
+            }
+            // if we have children, call method recursively
+            if( item.children && item.children.length ) {
+                _registerMenuItems( menu, item.children );
+            }
+        }
     }
 
     function initMenus() {
-        initCommands();
+        _registerCommands(commands);
 
         var menu = Menus.getContextMenu(Menus.ContextMenuIds.PROJECT_MENU);
 
         menu.addMenuDivider()
-
-        menu.addMenuItem('sencha.cmd');
-        menu.addMenuItem('sencha.cmd.build.production');
-        menu.addMenuItem('sencha.cmd.build.testing');
-        menu.addMenuItem('sencha.cmd.app.refresh');
+        _registerMenuItems( menu, commands );
     }
 
     function init(config) {
