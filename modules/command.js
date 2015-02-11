@@ -8,7 +8,8 @@ define(function(require, exports, module) {
         ExtensionUtils = brackets.getModule('utils/ExtensionUtils'),
         isWin          = brackets.platform === 'win',
         shell          = isWin ? 'cmd.exe' : '/bin/bash',
-        _outputPanel, _domain;
+        stopped,
+        _outputPanel, _stopEl, _domain;
 
     function _execute(cmd, cwd, displayCmd) {
         _outputPanel.show();
@@ -20,6 +21,8 @@ define(function(require, exports, module) {
             className : 'brackets-sencha-command'
         });
 
+        _stopEl.removeClass('disabled');
+
         _domain.exec(
             'execute',
             cmd,
@@ -27,6 +30,14 @@ define(function(require, exports, module) {
             isWin,
             shell
         );
+    }
+
+    function _stop() {
+        var el = $('.stop', _outputPanel.$panel);
+
+        if (!el.hasClass('disabled')) {
+            _domain.exec('kill');
+        }
     }
 
     function initDomain() {
@@ -44,17 +55,35 @@ define(function(require, exports, module) {
         });
 
         $(_domain).on('close', function(evt, dir) {
-            _outputPanel.append('Command Complete!', {
+            if (!stopped) {
+                _outputPanel.append('Command Complete!', {
+                    tag       : 'div',
+                    className : 'brackets-sencha-complete'
+                });
+            }
+
+            stopped = false;
+
+            _stopEl.addClass('disabled');
+        });
+
+        $(_domain).on('kill', function(evt) {
+            stopped = true;
+
+            _outputPanel.append('Command Stopped!', {
                 tag       : 'div',
-                className : 'brackets-sencha-complete'
+                className : 'brackets-sencha-stopped'
             });
         });
     }
 
     function init(config) {
         _outputPanel = config.OutputPanel;
+        _stopEl      = _outputPanel.stopEl;
 
         initDomain();
+
+        _stopEl.click(_stop);
 
         return {
             exec : _execute

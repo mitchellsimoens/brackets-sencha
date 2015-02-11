@@ -4,6 +4,7 @@
             <div class="span2">
                 <label class="title">Sencha Cmd Output</label>
             </div>
+            <a href="#" class="stop disabled">stop</a>
             <a href="#" class="clear">clear</a>
             <a href="#" class="close">&times;</a>
         </div>
@@ -23,9 +24,36 @@
         font-weight : bold;
     }
 
+    .brackets-sencha-stopped {
+        margin-top  : 10px;
+        font-weight : bold;
+        color       : #FF0000;
+    }
+
     .brackets-sencha-command {
         margin-bottom : 10px;
         font-weight   : bold;
+    }
+
+    .stop {
+        position   : absolute;
+        right      : 70px;
+        top        : 50%;
+        margin-top : -10px;
+        color      : #FF0000;
+    }
+
+    .stop:hover {
+        color : #FF0000;
+    }
+
+    .stop.disabled {
+        cursor : default;
+        color  : #888;
+    }
+
+    .stop.disabled:hover {
+        text-decoration : none
     }
 
     .clear {

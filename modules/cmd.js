@@ -17,43 +17,43 @@ define(function(require, exports) {
 
     var commands = [
         {
-            cmd  : 'sencha.cmd',
-            label: '** Sencha Cmd **',
-            fn   : function() {}
+            cmd   : 'sencha.cmd',
+            label : '** Sencha Cmd **',
+            fn    : function() {}
         },
         {
-            label: 'app',
-            children: [
+            label    : 'app',
+            children : [
                 {
-                    cmd  : 'sencha.cmd.app.refresh',
-                    label: 'app refresh',
-                    fn   : function() {
+                    cmd   : 'sencha.cmd.app.refresh',
+                    label : 'app refresh',
+                    fn    : function() {
                         _handleCmdCommand('sencha app refresh');
                     }
                 },
                 {
-                    cmd  : 'sencha.cmd.app.watch',
-                    label: 'app watch',
-                    fn   : function() {
+                    cmd   : 'sencha.cmd.app.watch',
+                    label : 'app watch',
+                    fn    : function() {
                         _handleCmdCommand('sencha app watch');
                     }
                 }
             ]
         },
         {
-            label: 'build',
-            children: [
+            label    : 'build',
+            children : [
                 {
-                    cmd  : 'sencha.cmd.build.production',
-                    label: 'build [production]',
-                    fn   : function() {
+                    cmd   : 'sencha.cmd.build.production',
+                    label : 'build [production]',
+                    fn    : function() {
                         _handleCmdCommand('sencha app build production');
                     }
                 },
                 {
-                    cmd  : 'sencha.cmd.build.testing',
-                    label: 'build [testing]',
-                    fn   : function() {
+                    cmd   : 'sencha.cmd.build.testing',
+                    label : 'build [testing]',
+                    fn    : function() {
                         _handleCmdCommand('sencha app build testing');
                     }
                 }
@@ -135,7 +135,8 @@ define(function(require, exports) {
     }
 
     function _doCmdCommand(cmd, cwd, version) {
-        var cmd_path = prefs.get('cmd_root') + '/' + version + '/sencha';
+        var cmd_root = prefs.get('cmd_root'),
+            cmd_path = cmd_root + '/' + version + '/sencha';
 
         FileSystem.resolve(cmd_path, function(error) {
             if (error) {
@@ -160,7 +161,8 @@ define(function(require, exports) {
                     }
                 );
             } else {
-                var real_cmd = cmd.replace(/sencha\s/g, cmd_path + ' ');
+                var replace  = '/usr/bin/java -Xms128m -Xmx1024m -Dapple.awt.UIElement=true -jar ' + cmd_path + '.jar ',
+                    real_cmd = cmd.replace(/sencha\s/g, replace);
 
                 _command.exec(real_cmd, cwd, cmd);
             }
@@ -194,26 +196,28 @@ define(function(require, exports) {
             }
         })
     }
-    
+
     /**
      * Recursively build out commands from pre-defined structure
      */
-    function _registerCommands( cmds ) {
+    function _registerCommands(cmds) {
         var i      = 0,
             length = cmds.length,
             item;
-        
+
         for (; i < length; i++) {
             item = cmds[i];
-            if( item.cmd && item.label && item.fn ) {
-                CommandManager.register(item.label, item.cmd, item.fn );
+
+            if (item.cmd && item.label && item.fn) {
+                CommandManager.register(item.label, item.cmd, item.fn);
             }
-            if( item.children && item.children.length ) {
-                _registerCommands( item.children );
+
+            if (item.children && item.children.length) {
+                _registerCommands(item.children);
             }
         }
     }
-    
+
     /**
      * Recursively build out menus from pre-defined structure
      */
@@ -221,15 +225,17 @@ define(function(require, exports) {
         var i      = 0,
             length = menuItems.length,
             item;
-        
+
         for (; i < length; i++) {
             item = menuItems[i];
-            if( item.cmd ) {
+
+            if (item.cmd) {
                 menu.addMenuItem(item.cmd);
             }
+
             // if we have children, call method recursively
-            if( item.children && item.children.length ) {
-                _registerMenuItems( menu, item.children );
+            if (item.children && item.children.length) {
+                _registerMenuItems(menu, item.children);
             }
         }
     }
@@ -239,8 +245,9 @@ define(function(require, exports) {
 
         var menu = Menus.getContextMenu(Menus.ContextMenuIds.PROJECT_MENU);
 
-        menu.addMenuDivider()
-        _registerMenuItems( menu, commands );
+        menu.addMenuDivider();
+
+        _registerMenuItems(menu, commands);
     }
 
     function init(config) {

@@ -8,6 +8,8 @@ define(function(require, exports) {
         AppInit          = brackets.getModule('utils/AppInit'),
         OutputPanel;
 
+    var clearEl, closeEl, stopEl;
+
     function _toggle() {
         if (OutputPanel.isVisible()) {
             _hide();
@@ -72,9 +74,13 @@ define(function(require, exports) {
         OutputPanel = WorkspaceManager.createBottomPanel('sencha.cmd.output.panel', $(_outputPanelHtml), 100);
 
         AppInit.appReady(function () {
-            $('.clear', OutputPanel.$panel).click(_clear);
-            $('.close', OutputPanel.$panel).click(_toggle);
+            clearEl.click(_clear);
+            closeEl.click(_toggle);
         });
+
+        clearEl = $('.clear', OutputPanel.$panel);
+        closeEl = $('.close', OutputPanel.$panel);
+        stopEl  = $('.stop', OutputPanel.$panel);
 
         return {
             append       : _append,
@@ -83,7 +89,11 @@ define(function(require, exports) {
             panel        : OutputPanel,
             scrollBottom : _scrollToBottom,
             show         : _show,
-            toggle       : _toggle
+            toggle       : _toggle,
+
+            clearEl : clearEl,
+            closeEl : closeEl,
+            stopEl  : stopEl
         };
     }
 

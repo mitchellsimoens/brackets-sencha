@@ -3,15 +3,18 @@
 (function() {
     'use strict';
 
-    var _domainManager,
-        child;
+    var kill = require('tree-kill'),
+        _domainManager, child;
 
     /**
     * @private
-    * Handler function for the simple.getMemory command.
     *
-    * @param {Boolean} total If true, return total memory; if false, return free memory only.
-    * @return {Number} The amount of memory.
+    * Execute a command in a shell.
+    *
+    * @param {String} cmd The command to run.
+    * @param {String} cwd The directory to execute the command in.
+    * @param {Boolean} isWin `true` if the current platform is Windows.
+    * @param {String} shell The path to the shell or cmd.exe
     */
     function _execute(cmd, cwd, isWin, shell) {
         var spawn  = require('child_process').spawn,
@@ -57,19 +60,27 @@
             }
         );
 
-        child.stdout.on('data', function (data) {
+        child.stdout.on('data', function(data) {
             _domainManager.emitEvent('senchaShellDomain', 'stdout', [data.toString()]);
         });
 
-        child.stderr.on('data', function (data) {
+        child.stderr.on('data', function(data) {
             _domainManager.emitEvent('senchaShellDomain', 'stderr', [data.toString()]);
         });
 
-        child.on('close', function () {
+        child.on('close', function() {
             child.kill();
             _domainManager.emitEvent('senchaShellDomain', 'close', [enddir]);
         });
+    }
 
+    function _kill() {
+        //SIGKILL, SIGTERM, SIGABRT, SIGHUP, SIGINT and SIGQUIT
+        if (child && child.pid) {
+            kill(child.pid);
+
+            _domainManager.emitEvent('senchaShellDomain', 'kill', [child.pid]);
+        }
     }
 
     function _detach() {
@@ -86,6 +97,15 @@
         if (!domainManager.hasDomain('senchaShellDomain')) {
             domainManager.registerDomain('senchaShellDomain', {major : 0, minor : 12});
         }
+
+        domainManager.registerCommand(
+            'senchaShellDomain',    // domain name
+            'kill',                 // command name
+            _kill,                  // command handler function
+            true,                   // isAsync
+            'Kill the current executing process',
+            []
+        );
 
         domainManager.registerCommand(
             'senchaShellDomain',    // domain name
@@ -148,6 +168,12 @@
             'senchaShellDomain',
             'clear',
             []
+        );
+
+        domainManager.registerEvent(
+            'senchaShellDomain',
+            'kill',
+            [{name : 'data', type : 'string'}]
         );
 
         _domainManager = domainManager;
