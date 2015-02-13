@@ -11,6 +11,11 @@ Each time a command is executed, it will also find what version of Sencha Cmd th
 ## TODO
 
  - Preferences UI
+ - Windows support (actual command uses /usr/bin/java command, works on OSX but not windows, also needs a pref to locate java)
  - Sencha Cmd
   - If the Cmd version the application is using is not installed, it will think the path to the Cmd install directory is not set and will ask. Need to be able to specify a version.
-  - Other commands, `sencha app upgrade` for example
+  - Other commands
+   - `sencha app upgrade`
+   - `sencha package build`
+   - `sencha package upgrade`
+   - etc
