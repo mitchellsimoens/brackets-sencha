@@ -12,8 +12,17 @@ Each time a command is executed, it will also find what version of Sencha Cmd th
 
  - Preferences UI
  - Windows support (actual command uses /usr/bin/java command, works on OSX but not windows, also needs a pref to locate java)
+ - Add menu manager of some sorts
+  - Modules register menu items with the manager
+  - Allow context menus in the working files list and editor
+  - Allow to add/remove menu items on the fly
  - Sencha Cmd
   - If the Cmd version the application is using is not installed, it will think the path to the Cmd install directory is not set and will ask. Need to be able to specify a version.
+  - Right-click in package to do a build will fail because it will find the .sencha dir but not the app dir.
+   - Skip and keep bubbling up to find app dir?
+   - Run a package build
+    - With same menu item?
+    - If menu manager add/remove items?
   - Other commands
    - `sencha app upgrade`
    - `sencha package build`
