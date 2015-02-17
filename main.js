@@ -10,12 +10,14 @@ define(function(require) {
 
     prefs.definePreference('cmd_root', 'string', user.replace('/Documents', ''));
 
-    var OutputPanel = require('./modules/output').init(),
+    var MenuManager = require('./modules/menumanager'),
+        OutputPanel = require('./modules/output').init(),
         Command     = require('./modules/command').init({
             OutputPanel : OutputPanel
         }),
         Cmd         = require('./modules/cmd').init({
             OutputPanel : OutputPanel,
-            Command     : Command
+            Command     : Command,
+            MenuManager : MenuManager
         });
 });

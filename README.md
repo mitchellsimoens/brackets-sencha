@@ -13,9 +13,10 @@ Each time a command is executed, it will also find what version of Sencha Cmd th
  - Preferences UI
  - Windows support (actual command uses /usr/bin/java command, works on OSX but not windows, also needs a pref to locate java)
  - Add menu manager of some sorts
-  - Modules register menu items with the manager
-  - Allow context menus in the working files list and editor
+  - ~~Modules register menu items with the manager~~
+  - ~~Allow context menus in the working files list and editor~~
   - Allow to add/remove menu items on the fly [example](https://github.com/dschaffe/brackets-scriptexec/blob/master/main.js#L128)
+   - Issue with this is file traversing and reading is async
  - Sencha Cmd
   - If the Cmd version the application is using is not installed, it will think the path to the Cmd install directory is not set and will ask. Need to be able to specify a version.
   - Right-click in package to do a build will fail because it will find the .sencha dir but not the app dir.

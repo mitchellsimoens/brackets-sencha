@@ -4,62 +4,13 @@
 define(function(require, exports) {
     'use strict';
 
-    var WorkspaceManager   = brackets.getModule('view/WorkspaceManager'),
-        AppInit            = brackets.getModule('utils/AppInit'),
-        CommandManager     = brackets.getModule('command/CommandManager'),
-        Menus              = brackets.getModule('command/Menus'),
-        ProjectManager     = brackets.getModule('project/ProjectManager'),
+    var ProjectManager     = brackets.getModule('project/ProjectManager'),
+        DocumentManager    = brackets.getModule('document/DocumentManager'),
         InMemoryFile       = brackets.getModule('document/InMemoryFile'),
         FileSystem         = brackets.getModule('filesystem/FileSystem'),
         PreferencesManager = brackets.getModule('preferences/PreferencesManager'),
         prefs              = PreferencesManager.getExtensionPrefs('brackets-sencha'),
         _outputPanel, _command;
-
-    var commands = [
-        {
-            cmd   : 'sencha.cmd',
-            label : '** Sencha Cmd **',
-            fn    : function() {}
-        },
-        {
-            label    : 'app',
-            children : [
-                {
-                    cmd   : 'sencha.cmd.app.refresh',
-                    label : 'app refresh',
-                    fn    : function() {
-                        _handleCmdCommand('sencha app refresh');
-                    }
-                },
-                {
-                    cmd   : 'sencha.cmd.app.watch',
-                    label : 'app watch',
-                    fn    : function() {
-                        _handleCmdCommand('sencha app watch');
-                    }
-                }
-            ]
-        },
-        {
-            label    : 'build',
-            children : [
-                {
-                    cmd   : 'sencha.cmd.build.production',
-                    label : 'build [production]',
-                    fn    : function() {
-                        _handleCmdCommand('sencha app build production');
-                    }
-                },
-                {
-                    cmd   : 'sencha.cmd.build.testing',
-                    label : 'build [testing]',
-                    fn    : function() {
-                        _handleCmdCommand('sencha app build testing');
-                    }
-                }
-            ]
-        }
-    ];
 
     function _getSenchaCfg(Dir, callback) {
         if (Dir.isDirectory) {
@@ -169,8 +120,14 @@ define(function(require, exports) {
         });
     }
 
-    function _handleCmdCommand(cmd) {
-        var selected = ProjectManager.getSelectedItem();
+    function _handleCmdCommand(cmd, inEditor) {
+        if (inEditor) {
+            var selected = DocumentManager.getCurrentDocument().file;
+
+            console.log('hi');
+        } else {
+            var selected = ProjectManager.getSelectedItem();
+        }
 
         _findAppDir(selected, null, function(dir, SenchaCfg) {
             if (dir && SenchaCfg) {
@@ -197,64 +154,116 @@ define(function(require, exports) {
         })
     }
 
-    /**
-     * Recursively build out commands from pre-defined structure
-     */
-    function _registerCommands(cmds) {
-        var i      = 0,
-            length = cmds.length,
-            item;
-
-        for (; i < length; i++) {
-            item = cmds[i];
-
-            if (item.cmd && item.label && item.fn) {
-                CommandManager.register(item.label, item.cmd, item.fn);
-            }
-
-            if (item.children && item.children.length) {
-                _registerCommands(item.children);
-            }
-        }
-    }
-
-    /**
-     * Recursively build out menus from pre-defined structure
-     */
-    function _registerMenuItems( menu, menuItems ) {
-        var i      = 0,
-            length = menuItems.length,
-            item;
-
-        for (; i < length; i++) {
-            item = menuItems[i];
-
-            if (item.cmd) {
-                menu.addMenuItem(item.cmd);
-            }
-
-            // if we have children, call method recursively
-            if (item.children && item.children.length) {
-                _registerMenuItems(menu, item.children);
-            }
-        }
-    }
-
-    function initMenus() {
-        _registerCommands(commands);
-
-        var menu = Menus.getContextMenu(Menus.ContextMenuIds.PROJECT_MENU);
-
-        menu.addMenuDivider();
-
-        _registerMenuItems(menu, commands);
-    }
-
     function init(config) {
         _command     = config.Command;
         _outputPanel = config.OutputPanel;
 
-        initMenus();
+        config.MenuManager.addMenus([
+            {
+                name  : 'sencha.cmd',
+                label : '** Sencha CMD **',
+                menu  : [
+                    'PROJECT_MENU',
+                    'WORKING_SET_CONTEXT_MENU'
+                ],
+                fn    : function() {}
+            },
+            {
+                name     : 'sencha.cmd.app.refresh',
+                label    : 'app refresh',
+                menu     : [
+                    'PROJECT_MENU',
+                    'WORKING_SET_CONTEXT_MENU'
+                ],
+                fn       : function() {
+                    _handleCmdCommand('sencha app refresh', false);
+                }
+            },
+            {
+                name     : 'sencha.cmd.app.watch',
+                label    : 'app watch',
+                menu     : [
+                    'PROJECT_MENU',
+                    'WORKING_SET_CONTEXT_MENU'
+                ],
+                fn       : function() {
+                    _handleCmdCommand('sencha app watch', false);
+                }
+            },
+            {
+                name     : 'sencha.cmd.app.build.production',
+                label    : 'app build [production]',
+                menu     : [
+                    'PROJECT_MENU',
+                    'WORKING_SET_CONTEXT_MENU'
+                ],
+                fn       : function() {
+                    _handleCmdCommand('sencha app build production', false);
+                }
+            },
+            {
+                name     : 'sencha.cmd.app.build.testing',
+                label    : 'app build [testing]',
+                menu     : [
+                    'PROJECT_MENU',
+                    'WORKING_SET_CONTEXT_MENU'
+                ],
+                fn       : function() {
+                    _handleCmdCommand('sencha app build testing', false);
+                }
+            }
+        ]);
+
+        config.MenuManager.addMenus([
+            {
+                name  : 'sencha.cmd_editor',
+                label : '** Sencha CMD **',
+                menu  : [
+                    'EDITOR_MENU'
+                ],
+                fn    : function() {}
+            },
+            {
+                name     : 'sencha.cmd.app.refresh_editor',
+                label    : 'app refresh',
+                menu     : [
+                    'EDITOR_MENU'
+                ],
+                fn       : function() {
+                    _handleCmdCommand('sencha app refresh', true);
+                }
+            },
+            {
+                name     : 'sencha.cmd.app.watch_editor',
+                label    : 'app watch',
+                menu     : [
+                    'EDITOR_MENU'
+                ],
+                fn       : function() {
+                    _handleCmdCommand('sencha app watch', true);
+                }
+            },
+            {
+                name     : 'sencha.cmd.app.build.production_editor',
+                label    : 'app build [production]',
+                menu     : [
+                    'EDITOR_MENU'
+                ],
+                fn       : function() {
+                    _handleCmdCommand('sencha app build production', true);
+                }
+            },
+            {
+                name     : 'sencha.cmd.app.build.testing_editor',
+                label    : 'app build [testing]',
+                menu     : [
+                    'EDITOR_MENU'
+                ],
+                fn       : function() {
+                    _handleCmdCommand('sencha app build testing', true);
+                }
+            }
+        ]);
     }
 
     exports.init = init;
