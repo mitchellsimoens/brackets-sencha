@@ -22,25 +22,36 @@ define(function(require, exports) {
     function _onBeforeMenuOpen(e) {
         var target = e.target,
             name, cfg, show,
-            menus, i, length, menu;
-
-        target.addMenuDivider();
+            menus, i, length, menu, divider, item;
 
         for (name in _registered) {
-            cfg    = _registered[name];
-            show   = cfg.renderer ? cfg.renderer() : true;
-            menus  = cfg.menu;
-            i      = 0;
-            length = menus.length;
+            cfg     = _registered[name];
+            show    = cfg.renderer ? cfg.renderer() : true;
+            menus   = cfg.menu;
+            i       = 0;
+            length  = menus.length;
+            divider = cfg.divider;
 
             for (; i < length; i++) {
                 menu = menus[i];
 
-                menu.removeMenuItem(name);
-
                 if (menu === target) {
+                    if (cfg.lastId && Menus.getMenuItem(cfg.lastId)) {
+                        if (divider) {
+                            menu.removeMenuDivider(cfg.lastId);
+                        } else {
+                            menu.removeMenuItem(name);
+                        }
+                    }
+
                     if (show) {
-                        menu.addMenuItem(name);
+                        if (divider) {
+                            item = menu.addMenuDivider('before', divider);
+                        } else {
+                            item = menu.addMenuItem(name);
+                        }
+
+                        cfg.lastId = item.id
                     }
 
                     break;
@@ -83,14 +94,20 @@ define(function(require, exports) {
             x       = 0;
             xLength = menus.length;
 
-            if (item.divider) {
-                _addMenu(item.menu, '-');
-            } else if (item.name && item.label && item.fn) {
-                if (!_registered[item.name]) {
-                    _registerCommand(item.label, item.name, item.fn);
+            if (item.name) {
+                if (item.divider) {
+                    _addMenu(item.menu, '-');
+                } else if (item.label && item.fn) {
+                    if (!_registered[item.name]) {
+                        _registerCommand(item.label, item.name, item.fn);
 
-                    _addMenu(item.menu, item);
+                        _addMenu(item.menu, item);
+                    }
+                } else {
+                    item = null;
+                }
 
+                if (item) {
                     _registered[item.name] = item;
                 }
             }

@@ -169,6 +169,14 @@ define(function(require, exports) {
                 fn    : function() {}
             },
             {
+                divider : 'sencha.cmd',
+                name    : 'sencha.cmd.divider',
+                menu    : [
+                    'PROJECT_MENU',
+                    'WORKING_SET_CONTEXT_MENU'
+                ]
+            },
+            {
                 name     : 'sencha.cmd.app.refresh',
                 label    : 'app refresh',
                 menu     : [
@@ -222,6 +230,13 @@ define(function(require, exports) {
                     'EDITOR_MENU'
                 ],
                 fn    : function() {}
+            },
+            {
+                divider : 'sencha.cmd_editor',
+                name    : 'sencha.cmd_editor.divider',
+                menu    : [
+                    'EDITOR_MENU'
+                ]
             },
             {
                 name     : 'sencha.cmd.app.refresh_editor',
