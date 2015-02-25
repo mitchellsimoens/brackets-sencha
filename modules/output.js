@@ -71,7 +71,7 @@ define(function(require, exports) {
     function init() {
         var _outputPanelHtml = require('text!../templates/outputPanel.html');
 
-        OutputPanel = WorkspaceManager.createBottomPanel('sencha.cmd.output.panel', $(_outputPanelHtml), 100);
+        OutputPanel = WorkspaceManager.createBottomPanel('sencha.cmd.output.panel', $(_outputPanelHtml), 250);
 
         AppInit.appReady(function () {
             clearEl.click(_clear);
