@@ -11,7 +11,6 @@ Each time a command is executed, it will also find what version of Sencha Cmd th
 ## TODO
 
  - Preferences UI
- - Windows support (actual command uses /usr/bin/java command, works on OSX but not windows, also needs a pref to locate java)
  - Add menu manager of some sorts
   - ~~Modules register menu items with the manager~~
   - ~~Allow context menus in the working files list and editor~~

@@ -112,7 +112,8 @@ define(function(require, exports) {
                     }
                 );
             } else {
-                var replace  = '/usr/bin/java -Xms128m -Xmx1024m -Dapple.awt.UIElement=true -jar ' + cmd_path + '.jar ',
+                //hope the java path is already installed
+                var replace  = 'java -Xms128m -Xmx1024m -Dapple.awt.UIElement=true -jar ' + cmd_path + '.jar ',
                     real_cmd = cmd.replace(/sencha\s/g, replace);
 
                 _command.exec(real_cmd, cwd, cmd);
