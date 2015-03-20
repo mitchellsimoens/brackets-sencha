@@ -76,7 +76,7 @@ define(function(require, exports) {
             menus[i] = menu;
 
             if (!_listened[name]) {
-                $(menu).on('beforeContextMenuOpen', _onBeforeMenuOpen);
+                menu.on('beforeContextMenuOpen', _onBeforeMenuOpen);
 
                 _listened[name] = true;
             }

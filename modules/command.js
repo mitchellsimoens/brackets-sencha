@@ -4,10 +4,12 @@
 define(function(require, exports, module) {
     'use strict';
 
-    var NodeDomain     = brackets.getModule('utils/NodeDomain'),
-        ExtensionUtils = brackets.getModule('utils/ExtensionUtils'),
-        isWin          = brackets.platform === 'win',
-        shell          = isWin ? 'cmd.exe' : '/bin/bash',
+    var NodeDomain         = brackets.getModule('utils/NodeDomain'),
+        ExtensionUtils     = brackets.getModule('utils/ExtensionUtils'),
+        PreferencesManager = brackets.getModule('preferences/PreferencesManager'),
+        prefs              = PreferencesManager.getExtensionPrefs('brackets-sencha'),
+        isWin              = brackets.platform === 'win',
+        shell              = isWin ? 'cmd.exe' : '/bin/bash',
         stopped,
         _outputPanel, _stopEl, _domain;
 
@@ -46,20 +48,47 @@ define(function(require, exports, module) {
             ExtensionUtils.getModulePath(module, '../node/SenchaDomain')
         );
 
-        $(_domain).on('stdout', function(evt, data) {
+        _domain.on('stdout', function(evt, data) {
             _outputPanel.append(data);
         });
 
-        $(_domain).on('stderr', function(evt, data) {
+        _domain.on('stderr', function(evt, data) {
             _outputPanel.append(data);
         });
 
-        $(_domain).on('close', function(evt, dir) {
+        _domain.on('close', function(evt, dir) {
             if (!stopped) {
+                var doClose = prefs.get('close_on_success');
+
                 _outputPanel.append('Command Complete!', {
                     tag       : 'div',
                     className : 'brackets-sencha-complete'
                 });
+
+                if (doClose) {
+                    var el = _outputPanel.append('Closing in 2 seconds. <span class="cancel_close_on_success">Click Here</span> to cancel.', {
+                            tag       : 'div',
+                            className : 'close_on_success_msg'
+                        }),
+                        timeout;
+
+                    el.one('click', function() {
+                        el.remove();
+
+                        _outputPanel.append('Close canceled.', {
+                            tag       : 'div',
+                            className : 'close_on_success_msg'
+                        });
+
+                        clearTimeout(timeout);
+                    });
+
+                    timeout = setTimeout(function() {
+                        el.empty();
+
+                        _outputPanel.hide();
+                    }, 2000);
+                }
             }
 
             stopped = false;
@@ -67,7 +96,7 @@ define(function(require, exports, module) {
             _stopEl.addClass('disabled');
         });
 
-        $(_domain).on('kill', function(evt) {
+        _domain.on('kill', function(evt) {
             stopped = true;
 
             _outputPanel.append('Command Stopped!', {

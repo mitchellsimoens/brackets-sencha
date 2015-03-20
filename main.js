@@ -8,7 +8,8 @@ define(function(require) {
         prefs              = PreferencesManager.getExtensionPrefs('brackets-sencha'),
         user               = brackets.app.getUserDocumentsDirectory();
 
-    prefs.definePreference('cmd_root', 'string', user.replace('/Documents', ''));
+    prefs.definePreference('cmd_root',         'string',   user.replace('/Documents', ''));
+    prefs.definePreference('close_on_success', 'boolean ', true                          );
 
     var MenuManager = require('./modules/menumanager'),
         OutputPanel = require('./modules/output').init(),

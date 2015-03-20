@@ -4,11 +4,13 @@
 define(function(require, exports) {
     'use strict';
 
-    var WorkspaceManager = brackets.getModule('view/WorkspaceManager'),
-        AppInit          = brackets.getModule('utils/AppInit'),
+    var WorkspaceManager   = brackets.getModule('view/WorkspaceManager'),
+        AppInit            = brackets.getModule('utils/AppInit'),
+        PreferencesManager = brackets.getModule('preferences/PreferencesManager'),
+        prefs              = PreferencesManager.getExtensionPrefs('brackets-sencha'),
         OutputPanel;
 
-    var clearEl, closeEl, stopEl;
+    var clearEl, closeEl, stopEl, closeOnSuccessEl;
 
     function _toggle() {
         if (OutputPanel.isVisible()) {
@@ -30,6 +32,10 @@ define(function(require, exports) {
         var el = $('.brackets-sencha-content', OutputPanel.$panel);
 
         el.empty();
+    }
+
+    function _closeOnSuccessClick() {
+        prefs.set('close_on_success', this.checked);
     }
 
     function _scrollToBottom() {
@@ -66,6 +72,8 @@ define(function(require, exports) {
         el.append(div);
 
         _scrollToBottom();
+
+        return $(div);
     }
 
     function init() {
@@ -74,13 +82,17 @@ define(function(require, exports) {
         OutputPanel = WorkspaceManager.createBottomPanel('sencha.cmd.output.panel', $(_outputPanelHtml), 250);
 
         AppInit.appReady(function () {
+            closeOnSuccessEl.prop('checked', prefs.get('close_on_success'));
+
             clearEl.click(_clear);
             closeEl.click(_toggle);
+            closeOnSuccessEl.click(_closeOnSuccessClick);
         });
 
-        clearEl = $('.clear', OutputPanel.$panel);
-        closeEl = $('.close', OutputPanel.$panel);
-        stopEl  = $('.stop', OutputPanel.$panel);
+        clearEl          = $('.clear',            OutputPanel.$panel);
+        closeEl          = $('.close',            OutputPanel.$panel);
+        closeOnSuccessEl = $('#close_on_success', OutputPanel.$panel);
+        stopEl           = $('.stop',             OutputPanel.$panel);
 
         return {
             append       : _append,
@@ -91,9 +103,10 @@ define(function(require, exports) {
             show         : _show,
             toggle       : _toggle,
 
-            clearEl : clearEl,
-            closeEl : closeEl,
-            stopEl  : stopEl
+            clearEl          : clearEl,
+            closeEl          : closeEl,
+            closeOnSuccessEl : closeOnSuccessEl,
+            stopEl           : stopEl
         };
     }
 

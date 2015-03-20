@@ -4,6 +4,10 @@
             <div class="span2">
                 <label class="title">Sencha Cmd Output</label>
             </div>
+            <div class="close_checkbox">
+                <input type="checkbox" value=1 id="close_on_success" />
+                <label for="close_on_success">Close on Success</label>
+            </div>
             <a href="#" class="stop disabled">stop</a>
             <a href="#" class="clear">clear</a>
             <a href="#" class="close">&times;</a>
@@ -61,5 +65,24 @@
         right      : 30px;
         top        : 50%;
         margin-top : -10px;
+    }
+
+    .close_checkbox {
+        float        : right;
+        margin-right : 100px;
+        margin-top   : 4px;
+    }
+
+    .close_checkbox label {
+        display : inline-block;
+    }
+
+    .cancel_close_on_success {
+        font-weight : bold;
+        cursor      : pointer;
+    }
+
+    .close_on_success_msg {
+        margin-top : 10px;
     }
 </style>
