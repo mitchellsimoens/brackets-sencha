@@ -3,7 +3,8 @@
 
 define(function(require, exports, module) {
     'use strict';
-    var FileSystem         = brackets.getModule('filesystem/FileSystem'),
+    var ProjectManager     = brackets.getModule('project/ProjectManager'),
+        FileSystem         = brackets.getModule('filesystem/FileSystem'),
         FileUtils          = brackets.getModule('file/FileUtils'),
         PreferencesManager = brackets.getModule('preferences/PreferencesManager'),
         Menus              = brackets.getModule('command/Menus'),
@@ -12,7 +13,7 @@ define(function(require, exports, module) {
         baseURL            = 'https://fiddle.sencha.com/#fiddle/',
         sdkURLs;
     
-    function init() {	  
+    function init(config) {
         sdkURLs = {
             // ext js
             '5.1.0'         : 'https://extjs.cachefly.net/ext/gpl/5.1.0',
@@ -37,10 +38,22 @@ define(function(require, exports, module) {
             'touch-2.2.0'   : 'https://extjs.cachefly.net/touch/sencha-touch-2.2.0',
             'touch-2.1.1'   : 'https://extjs.cachefly.net/touch/sencha-touch-2.1.1',
             'touch-2.0.1.1' : 'https://extjs.cachefly.net/touch/sencha-touch-2.0.1.1'
-        };        
-        return {
-            download: _getFiddleURL
         };
+        
+        config.MenuManager.addMenus([
+            {
+                name     : 'sencha.fiddle.download',
+                label    : 'Download a Fiddle',
+                menu     : [
+                    'PROJECT_MENU',
+                    'WORKING_SET_CONTEXT_MENU'
+                ],
+                fn       : function() {
+                    var path = ProjectManager.getSelectedItem().fullPath;
+                    _getFiddleURL( path );
+                }
+            }
+        ]);
     }
     
     /**
@@ -351,5 +364,6 @@ define(function(require, exports, module) {
             //console.log( arguments );
         });
     }
+    
     exports.init = init;
 });

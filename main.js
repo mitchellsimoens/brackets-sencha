@@ -20,5 +20,8 @@ define(function(require) {
             OutputPanel : OutputPanel,
             Command     : Command,
             MenuManager : MenuManager
+        }),
+        Fiddle      = require('./modules/fiddle').init({
+            MenuManager : MenuManager
         });
 });
