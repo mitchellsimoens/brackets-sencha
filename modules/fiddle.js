@@ -3,27 +3,16 @@
 
 define(function(require, exports, module) {
     'use strict';
-    var ProjectManager     = brackets.getModule('project/ProjectManager'),
-        DocumentManager    = brackets.getModule('document/DocumentManager'),
-        ExtensionUtils     = brackets.getModule('utils/ExtensionUtils'),
-        InMemoryFile       = brackets.getModule('document/InMemoryFile'),
-        FileSystem         = brackets.getModule('filesystem/FileSystem'),
+    var FileSystem         = brackets.getModule('filesystem/FileSystem'),
         FileUtils          = brackets.getModule('file/FileUtils'),
-        NodeDomain         = brackets.getModule('utils/NodeDomain'),
         PreferencesManager = brackets.getModule('preferences/PreferencesManager'),
         Menus              = brackets.getModule('command/Menus'),
         Dialogs            = brackets.getModule('widgets/Dialogs'),
         prefs              = PreferencesManager.getExtensionPrefs('brackets-sencha'),
         baseURL            = 'https://fiddle.sencha.com/#fiddle/',
-        sdkURLs,
-        sdkOptions,
-        _domain;
+        sdkURLs;
     
-    function init() {
-        _domain = new NodeDomain(
-            'fiddleDomain',
-            ExtensionUtils.getModulePath(module, '../node/FiddleDomain')
-        );  	  
+    function init() {	  
         sdkURLs = {
             // ext js
             '5.1.0'         : 'https://extjs.cachefly.net/ext/gpl/5.1.0',
@@ -177,6 +166,8 @@ define(function(require, exports, module) {
                 deferred.resolve(webserverPath);
             }
         });
+        // return a promise which will be resolved either immediately becuase a path exists,
+        // or because the user selects one via the showOpenDialog()
         return deferred.promise();
     }
     
@@ -212,6 +203,8 @@ define(function(require, exports, module) {
                 deferred.resolve(sdkPath);
             }
         });
+        // return a promise which will be resolved either immediately becuase a path exists,
+        // or because the user selects one via the showOpenDialog()
         return deferred.promise();
     }
     
@@ -236,6 +229,13 @@ define(function(require, exports, module) {
         return indexAsset;
     }
     
+    /**
+     * @private
+     * Common method for writing a fiddle asset/mockdata to file
+     * @param {String} name The name of the asset (file)
+     * @param {String} content The content of the file
+     * @param {String} rootPath The rootpath where the fiddle is being written
+     */
     function _writeLocalAsset(name, content, rootPath) {
         var i=0,
             folders,folder,folderPath,fileName,file;
@@ -295,7 +295,22 @@ define(function(require, exports, module) {
         }
     }
     
-    function _parseFiddleContent(fiddle, path) {
+    /**
+     * @private
+     * This method will check the version of the fiddle and ensure that:
+     *
+     * 1.) A web server path preference has been set AND
+     * 2.) A sdk path preference has been set for the given version
+     *
+     * In both cases, the answer could be "no", so this incorporates Deferred()
+     * so that we can allow each async path selection to complete,
+     * but still do them in order and only after they are complete
+     * will we actually process the fiddle and write it to file
+     *
+     * @param {Object} fiddle The downloaded, decoded fiddle content
+     * @param {String} path The path selected from the context menu
+     */
+    function _preFiddleCheck(fiddle, path) {
         var indexAsset,
             version,
             prefsDeferred;
@@ -307,6 +322,7 @@ define(function(require, exports, module) {
         //prefs.set('sdk_path_' + version, '');
         //prefs.set('webserver_path', '');
         
+        // create the deferred
         prefsDeferred = $.Deferred()
         prefsDeferred.then(function() {
             return _resolveWebserverPath();
@@ -320,7 +336,7 @@ define(function(require, exports, module) {
     
     /**
      * @private
-     * Main method for downloading url
+     * Retrieves fiddle data from web service
      * @param {String} path The path selected from the context menu
      * @param {String} url  The url of the fiddle to download
      */
@@ -329,7 +345,7 @@ define(function(require, exports, module) {
          .success(function(response, textStatus, jqXHR){
             var data = response.data;
             if(data.success && data.fiddle) {
-                _parseFiddleContent(data.fiddle, path);
+                _preFiddleCheck(data.fiddle, path);
             }
         }).error(function(jqXHR, textStatus, errorThrown){
             //console.log( arguments );

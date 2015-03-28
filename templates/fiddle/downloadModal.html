@@ -1,17 +1,16 @@
-<div class="template modal">
+<div class="template modal" style="width: 300px;">
     <div class="modal-header">
         <h1 class="dialog-title">Download a Fiddle</h1>
     </div>
     <div class="modal-body">
-        <!--<div class="dialog-message">{{{message}}}</div>-->
         <form>
             <div class="input-group">
-                <span class="input-group-addon">@</span>
-                <input type="text" name="fiddle" class="form-control fiddle-url" placeholder="Fiddle URL or ID" value="ka1">
+                <input type="text" name="fiddle" class="form-control fiddle-url" placeholder="Fiddle URL or ID" style="width: 260px;">
             </div>
         </form>
     </div>
     <div class="modal-footer">
-        <button class="dialog-button btn download-button btn-primary" id="download" data-button-id="download">Download</button>
+        <button class="dialog-button btn " data-button-id="cancel">Cancel</button>
+        <button class="dialog-button btn download-button primary" id="download" data-button-id="download" disabled>Download</button>
     </div>
 </div>
