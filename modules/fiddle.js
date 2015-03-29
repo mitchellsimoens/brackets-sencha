@@ -48,8 +48,8 @@ define(function(require, exports, module) {
                     'PROJECT_MENU'
                 ],
                 fn       : function() {
-                    var path = ProjectManager.getSelectedItem().fullPath;
-                    
+                    var item = ProjectManager.getSelectedItem(),
+                        path = item ? item.fullPath : ProjectManager.getProjectRoot().fullPath;
                     FileSystem.resolve(path, function(error, entry, stats) {
                         // if there's an error or the target path is a file, show error
                         if (error || (entry && entry._isFile)) {
