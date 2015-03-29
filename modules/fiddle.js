@@ -45,12 +45,19 @@ define(function(require, exports, module) {
                 name     : 'sencha.fiddle.download',
                 label    : 'Download a Fiddle',
                 menu     : [
-                    'PROJECT_MENU',
-                    'WORKING_SET_CONTEXT_MENU'
+                    'PROJECT_MENU'
                 ],
                 fn       : function() {
                     var path = ProjectManager.getSelectedItem().fullPath;
-                    _getFiddleURL( path );
+                    
+                    FileSystem.resolve(path, function(error, entry, stats) {
+                        // if there's an error or the target path is a file, show error
+                        if (error || (entry && entry._isFile)) {
+                            alert('Fiddle download location *must* be a folder');
+                        } else {
+                            _getFiddleURL( path );
+                        }
+                    });
                 }
             }
         ]);
@@ -156,29 +163,31 @@ define(function(require, exports, module) {
      * preference based on user selection
      */
     function _resolveWebserverPath() {
-        var webserverPath = prefs.get('webserver_path') || '/fakefake/fake/morefake',
-            deferred = new $.Deferred();
-        FileSystem.resolve(webserverPath, function(error) {
-            if (error) {
-                alert('Please choose your webserver root');
-                FileSystem.showOpenDialog(
-                    false,
-                    true,
-                    'Path to webserver',
-                    null,
-                    null,
-                    function(error, dirs) {
-                        if (!error && dirs.length > 0) {
-                            var dir = dirs.pop();
-                            prefs.set('webserver_path', dir);
-                            deferred.resolve(dir);
-                        }
-                    }
-                );
-            } else {
-                deferred.resolve(webserverPath);
-            }
-        });
+        var webserverPath = prefs.get('webserver_path') || false,
+            deferred = new $.Deferred(),
+            message = 'Please choose your webserver root',
+            callback = function(error, dirs) {
+                if (!error && dirs.length > 0) {
+                    var dir = dirs.pop();
+                    prefs.set('webserver_path', dir);
+                    deferred.resolve(dir);
+                }
+            };
+        if(webserverPath) {
+            FileSystem.resolve(webserverPath, function(error) {
+                if (error) {
+                    alert('Please choose your webserver root');
+                    _showPathSelector('Path to webserver root', callback);
+                } else {
+                    deferred.resolve(webserverPath);
+                }
+            });
+        }
+        else {
+            alert('Please choose your webserver root');
+            _showPathSelector('Path to webserver root', callback);
+        }
+        
         // return a promise which will be resolved either immediately becuase a path exists,
         // or because the user selects one via the showOpenDialog()
         return deferred.promise();
@@ -191,34 +200,51 @@ define(function(require, exports, module) {
      * @param {String} version The version of the fiddle's sdk
      */
     function _resolveSDKPath(version) {
-        var sdkPath = prefs.get('sdk_path_' + version) || '/fakefakefake/morefake',
-            deferred = new $.Deferred();
-        // make sure webserver path is defined before bother with sdkpath
-        FileSystem.resolve(sdkPath, function(error) {
-            if (error) {
-                alert('You haven\'t defined an SDK path for '+ version +'. Please provide the path to the directory, relative to your web root, where this SDK can be found');
-
-                FileSystem.showOpenDialog(
-                    false,
-                    true,
-                    'Path to ' + version + ' SDK',
-                    null,
-                    null,
-                    function(error, dirs) {
-                        if (!error && dirs.length > 0) {
-                            var dir = dirs.pop();
-                            prefs.set('sdk_path_' + version, dir);
-                            deferred.resolve(dir);
-                        }
-                    }
-                );
-            } else {
-                deferred.resolve(sdkPath);
-            }
-        });
+        var sdkPath = prefs.get('sdk_path_' + version) || false,
+            deferred = new $.Deferred(),
+            message = 'You haven\'t defined an SDK path for '+ version +'. Please provide the path to the directory, relative to your web root, where this SDK can be found',
+            callback = function(error, dirs) {
+                if (!error && dirs.length > 0) {
+                    var dir = dirs.pop();
+                    prefs.set('sdk_path_' + version, dir);
+                    deferred.resolve(dir);
+                }
+            };
+        // if sdk path is defined, resolve; otherwise, just show selector
+        if(sdkPath) {
+            FileSystem.resolve(sdkPath, function(error) {
+                if (error) {
+                    alert(message);
+                    _showPathSelector('Path to ' + version + ' SDK', callback);
+                } else {
+                    deferred.resolve(sdkPath);
+                }
+            });
+        }
+        else {
+            alert(message);
+            _showPathSelector('Path to ' + version + ' SDK', callback);
+        }
         // return a promise which will be resolved either immediately becuase a path exists,
         // or because the user selects one via the showOpenDialog()
         return deferred.promise();
+    }
+    
+    /**
+     * @private
+     * Convenience method for showing path selector
+     * @param {String} title The title for the modal
+     * @param {Function} callback The callback method to execute upon selection
+     */
+    function _showPathSelector(title,callback) {
+        FileSystem.showOpenDialog(
+            false,
+            true,
+            title,
+            null,
+            null,
+            callback
+        );
     }
     
     /**
