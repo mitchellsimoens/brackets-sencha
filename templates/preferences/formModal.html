@@ -1,0 +1,36 @@
+<div class="template modal">
+    <div class="modal-header">
+        <h1 class="dialog-title">Manage Sencha Preferences</h1>
+    </div>
+    <div class="modal-body">
+        <form id="preferences_form">
+            {{#prefCollection}}
+                <h2>{{label}}</h2>
+                {{#preferences}}
+                    <div class="input-group">
+                        <label for="{{key}}">{{label}}</label>
+                        {{#isText}}
+                        <input type="text" name="{{key}}" style="width:300px;" class="form-control" value="{{value}}">
+                        {{/isText}}
+                        {{#isBoolean}}
+                        <select name="{{key}}" style="width:300px;" class="form-control" value="{{value}}">
+                            {{#booleanOptions}}
+                            <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{text}}</option>
+                            {{/booleanOptions}}
+                        </select>
+                        {{/isBoolean}}
+                        {{#isPath}}
+                        <input type="text" style="width:300px;" name="{{key}}" class="form-control" value="{{value}}" readonly>
+                        <button class="inline-button clear-button btn-danger" style="margin-top: -9px;">Clear</button>
+                        <button class="inline-button path-button btn-success" style="margin-top: -9px;">Select</button>
+                        {{/isPath}}
+                    </div>
+                {{/preferences}}
+            {{/prefCollection}}
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="dialog-button btn " data-button-id="cancel">Cancel</button>
+        <button class="dialog-button btn save-button primary" id="save-button" data-button-id="save-button">Save Preferences</button>
+    </div>
+</div>
