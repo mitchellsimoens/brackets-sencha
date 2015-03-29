@@ -10,7 +10,7 @@
         "brackets": ">=0.24.0"
     },
     "keywords": [
-        "sencha", "cmd", "ext", "extjs", "touch"
+        "sencha", "cmd", "ext", "extjs", "touch", "fiddle"
     ],
     "contributors": [
         {
