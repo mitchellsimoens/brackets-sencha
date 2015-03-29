@@ -92,6 +92,8 @@ define(function(require, exports, module) {
             $element = dialog.getElement(),
             $urlField = $element.find('.fiddle-url'),
             $downloadButton = $element.find('.download-button');
+        // focus urlfield right away
+        $urlField.focus();
         // add listeners
         // on keyup, check if entry is valid
         $urlField.on('keyup', function(e) {
@@ -125,7 +127,7 @@ define(function(require, exports, module) {
      * @return {String}
      */
     function _getFiddleVersion(html) {
-        var version = 0,
+        var version = false,
             firstScript = html.match(/<script.*<\/script>/);
         // did we match something?
         if(firstScript.length) {
@@ -360,17 +362,21 @@ define(function(require, exports, module) {
         // uncomment to debug webserver path/sdk path promises
         //prefs.set('sdk_path_' + version, '');
         //prefs.set('webserver_path', '');
-        
-        // create the deferred
-        prefsDeferred = $.Deferred()
-        prefsDeferred.then(function() {
-            return _resolveWebserverPath();
-        }).then(function() {
-            return _resolveSDKPath(version);
-        }).done(function() {
-            _createLocalFiddle(fiddle, path, version);                
-        })
-        prefsDeferred.resolve();            
+        if(!version) {
+            Dialogs.showModalDialog('', 'Whoops!', 'Sorry, the version used by the Fiddle is not available.');
+        }
+        else {
+            // create the deferred
+            prefsDeferred = $.Deferred()
+            prefsDeferred.then(function() {
+                return _resolveWebserverPath();
+            }).then(function() {
+                return _resolveSDKPath(version);
+            }).done(function() {
+                _createLocalFiddle(fiddle, path, version);                
+            })
+            prefsDeferred.resolve();           
+        } 
     }
     
     /**
@@ -386,8 +392,11 @@ define(function(require, exports, module) {
             if(data.success && data.fiddle) {
                 _preFiddleCheck(data.fiddle, path);
             }
+            else {
+                Dialogs.showModalDialog('', 'Fiddle could not be downloaded', data.msg);
+            }
         }).error(function(jqXHR, textStatus, errorThrown){
-            //console.log( arguments );
+            Dialogs.showModalDialog('', 'Whoops!', 'Sorry, an unknown error occurred. Please try again!');
         });
     }
     
