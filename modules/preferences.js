@@ -40,70 +40,10 @@ define(function(require, exports) {
                 type: 'boolean',default: '', inputType: 'boolean',  group: 'cmd',    label: 'Close on Success'
             },
             'webserver_path': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'Webserver Path'
+                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'Local Webserver Path'
             },
-            'sdk_path_5.1.0': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Ext JS 5.1.0)'
-            },
-            'sdk_path_5.0.1': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Ext JS 5.0.1)'
-            },
-            'sdk_path_5.0.0': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Ext JS 5.0.0)'
-            },
-            'sdk_path_ext-5.0.0.736': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Ext JS 5.0.0.736)'
-            },
-            'sdk_path_4.2.1': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Ext JS 4.2.1)'
-            },
-            'sdk_path_4.2.0': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Ext JS 4.2.0)'
-            },
-            'sdk_path_ext-4.1.1-gpl': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Ext JS 4.1.1)'
-            },
-            'sdk_path_ext-4.1.0-gpl': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Ext JS 4.1.0)'
-            },
-            'sdk_path_ext-4.0.7-gpl': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Ext JS 4.0.7)'
-            },
-            'sdk_path_3.4.1.1': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Ext JS 3.4.1.1)'
-            },
-            'sdk_path_ext-3.4.0': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Ext JS 3.4.0)'
-            },
-            'sdk_path_ext-3.3.0': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Ext JS 3.3.0)'
-            },
-            'sdk_path_ext-3.0.0': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Ext JS 3.0.0)'
-            },
-            'sdk_path_ext-2.3.0': {
-                 type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Ext JS 2.3.0)'
-            },
-            'sdk_path_touch-2.4.1': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Sencha Touch 2.4.1)'
-            },
-            'sdk_path_touch-2.4.0': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Sencha Touch 2.4.0)'
-            },
-            'sdk_path_touch-2.3.0': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Sencha Touch 2.3.0)'
-            },
-            'sdk_path_touch-2.2.1': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Sencha Touch 2.2.1)'
-            },
-            'sdk_path_touch-2.2.0': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Sencha Touch 2.2.0)'
-            },
-            'sdk_path_touch-2.1.1': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Sencha Touch 2.1.1)'
-            },
-            'sdk_path_touch-2.0.1.1': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'SDK Path (Sencha Touch 2.0.1.1)'
+            'webserver_url': {
+                type: 'string', default: '', inputType: 'text',   group: 'fiddle', label: 'Local Webserver URL'
             }
         };
         // loop over defs and define them
@@ -251,6 +191,7 @@ define(function(require, exports) {
         for(key in groups){
             senchaPrefs.push(groups[key]);
         }
+        // render with Mustache so we can handle *some* logic in the template
         renderedTemplate = Mustache.render(modalTemplate, {prefCollection: senchaPrefs});
         dialog = Dialogs.showModalDialogUsingTemplate(renderedTemplate);
         $element = dialog.getElement();

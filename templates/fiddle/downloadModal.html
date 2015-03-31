@@ -1,4 +1,4 @@
-<div class="template modal" style="width: 300px;">
+<div class="template modal" style="width: 420px;">
     <div class="modal-header">
         <h1 class="dialog-title">Download a Fiddle</h1>
     </div>
@@ -6,6 +6,12 @@
         <form>
             <div class="input-group">
                 <input type="text" name="fiddle" class="form-control fiddle-url" placeholder="Fiddle URL or ID" style="width: 260px;">
+            </div>
+            <div class="input-group path-group">
+                <p class="sdk-message">Select the location of the SDK you'd like to use:</p>
+                <input type="text" style="width: 260px;" name="sdkPath" class="form-control sdk-path" readonly placeholder="SDK Path">
+                <button class="inline-button clear-button btn-danger" style="margin-top: -9px;">Clear</button>
+                <button class="inline-button path-button btn-success" style="margin-top: -9px;">Select</button>
             </div>
         </form>
     </div>

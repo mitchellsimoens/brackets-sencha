@@ -11,33 +11,96 @@ define(function(require, exports, module) {
         Dialogs            = brackets.getModule('widgets/Dialogs'),
         prefs              = PreferencesManager.getExtensionPrefs('brackets-sencha'),
         baseURL            = 'https://fiddle.sencha.com/#fiddle/',
-        sdkURLs;
+        sdks;
     
     function init(config) {
-        sdkURLs = {
+        sdks = {
             // ext js
-            '5.1.0'         : 'https://extjs.cachefly.net/ext/gpl/5.1.0',
-            '5.0.1'         : 'https://extjs.cachefly.net/ext/gpl/5.0.1',
-            '5.0.0'         : 'https://extjs.cachefly.net/ext/gpl/5.0.0',
-            'ext-5.0.0.736' : 'https://extjs.cachefly.net/ext/beta/ext-5.0.0.736',
-            '4.2.1'         : 'https://extjs.cachefly.net/ext/gpl/4.2.1',
-            '4.2.0'         : 'https://extjs.cachefly.net/ext/gpl/4.2.0',
-            'ext-4.1.1-gpl' : 'https://extjs.cachefly.net/ext-4.1.1-gpl',
-            'ext-4.1.0-gpl' : 'https://extjs.cachefly.net/ext-4.1.0-gpl',
-            'ext-4.0.7-gpl' : 'https://extjs.cachefly.net/ext-4.0.7-gpl',
-            '3.4.1.1'       : 'https://extjs.cachefly.net/ext/gpl/3.4.1.1',
-            'ext-3.4.0'     : 'https://extjs.cachefly.net/ext-3.4.0',
-            'ext-3.3.0'     : 'https://extjs.cachefly.net/ext-3.3.0',
-            'ext-3.0.0'     : 'https://extjs.cachefly.net/ext-3.0.0',
-            'ext-2.3.0'     : 'https://extjs.cachefly.net/ext-2.3.0',
+            '5.1.0': {
+                remote  : 'https://extjs.cachefly.net/ext/gpl/5.1.0',
+                label   : 'Ext JS 5.1.0'
+            },
+            '5.0.1': {
+                remote  : 'https://extjs.cachefly.net/ext/gpl/5.0.1',
+                label   : 'Ext JS 5.0.1'
+            },
+            '5.0.0': {
+                remote  : 'https://extjs.cachefly.net/ext/gpl/5.0.0',
+                label   : 'Ext JS 5.0.0'
+            },
+            'ext-5.0.0.736': {
+                remote  : 'https://extjs.cachefly.net/ext/beta/ext-5.0.0.736',
+                label   : 'Ext JS 5.0.0.736'
+            },
+            '4.2.1': {
+                remote  : 'https://extjs.cachefly.net/ext/gpl/4.2.1',
+                label   : 'Ext JS 4.2.1'
+            },
+            '4.2.0': {
+                remote  : 'https://extjs.cachefly.net/ext/gpl/4.2.0',
+                label   : 'Ext JS 4.2.0'
+            },
+            'ext-4.1.1-gpl': {
+                remote  : 'https://extjs.cachefly.net/ext-4.1.1-gpl',
+                label   : 'Ext JS 4.1.1'
+            },
+            'ext-4.1.0-gpl': {
+                remote  : 'https://extjs.cachefly.net/ext-4.1.0-gpl',
+                label   : 'Ext JS 4.1.0'
+            },
+            'ext-4.0.7-gpl': {
+                remote  : 'https://extjs.cachefly.net/ext-4.0.7-gpl',
+                label   : 'Ext JS 4.0.7'
+            },
+            '3.4.1.1': {
+                remote  : 'https://extjs.cachefly.net/ext/gpl/3.4.1.1',
+                label   : 'Ext JS 3.4.1.1'
+            },
+            'ext-3.4.0': {
+                remote  : 'https://extjs.cachefly.net/ext-3.4.0',
+                label   : 'Ext JS 3.4.0'
+            },
+            'ext-3.3.0': {
+                remote  : 'https://extjs.cachefly.net/ext-3.3.0',
+                label   : 'Ext JS 3.3.0'
+            },
+            'ext-3.0.0': {
+                remote  : 'https://extjs.cachefly.net/ext-3.0.0',
+                label   : 'Ext JS 3.0.0'
+            },
+            'ext-2.3.0': {
+                remote  : 'https://extjs.cachefly.net/ext-2.3.0',
+                label   : 'Ext JS 2.3.0'
+            },
             // touch
-            'touch-2.4.1'   : 'https://extjs.cachefly.net/touch/sencha-touch-2.4.1',
-            'touch-2.4.0'   : 'https://extjs.cachefly.net/touch/sencha-touch-2.4.0',
-            'touch-2.3.0'   : 'https://extjs.cachefly.net/touch/sencha-touch-2.3.0',
-            'touch-2.2.1'   : 'https://extjs.cachefly.net/touch/sencha-touch-2.2.1',
-            'touch-2.2.0'   : 'https://extjs.cachefly.net/touch/sencha-touch-2.2.0',
-            'touch-2.1.1'   : 'https://extjs.cachefly.net/touch/sencha-touch-2.1.1',
-            'touch-2.0.1.1' : 'https://extjs.cachefly.net/touch/sencha-touch-2.0.1.1'
+            'touch-2.4.1': {
+                remote  : 'https://extjs.cachefly.net/touch/sencha-touch-2.4.1',
+                label   : 'Sencha Touch 2.4.1'
+            },
+            'touch-2.4.0': {
+                remote  : 'https://extjs.cachefly.net/touch/sencha-touch-2.4.0',
+                label   : 'Sencha Touch 2.4.0'
+            },
+            'touch-2.3.0': {
+                remote  : 'https://extjs.cachefly.net/touch/sencha-touch-2.3.0',
+                label   : 'Sencha Touch 2.3.0'
+            },
+            'touch-2.2.1': {
+                remote  : 'https://extjs.cachefly.net/touch/sencha-touch-2.2.1',
+                label   : 'Sencha Touch 2.2.1'
+            },
+            'touch-2.2.0': {
+                remote  : 'https://extjs.cachefly.net/touch/sencha-touch-2.2.0',
+                label   : 'Sencha Touch 2.2.0'
+            },
+            'touch-2.1.1': {
+                remote  : 'https://extjs.cachefly.net/touch/sencha-touch-2.1.1',
+                label   : 'Sencha Touch 2.1.1'
+            },
+            'touch-2.0.1.1': {
+                remote  : 'https://extjs.cachefly.net/touch/sencha-touch-2.0.1.1',
+                label   : 'Sencha Touch 2.0.1.1'
+            }
         };
         
         config.MenuManager.addMenus([
@@ -67,17 +130,52 @@ define(function(require, exports, module) {
      * @private
      * Validates the input from the user to ensure it's
      * either a fiddle url or a fiddle id
-     * @param {String} value The value entered by the user
      */
-    function _validateFiddleURL(value) {
+    function _validateFiddleURL() {
         var isValid = false,
+            url = $('.fiddle-url').val(),
             shortRegex = /^[a-z0-9]{3}$/,
-            urlRegex = /https:\/\/fiddle.sencha.com\/\#fiddle\/[a-z0-9]{3}$/i;
+            urlRegex = /https:\/\/fiddle.sencha.com\/\#fiddle\/[a-z0-9]{3}$/i,
+            sdkPath = $('.sdk-path').val();
         // can be fiddle id or full url
-        if( shortRegex.test(value) || urlRegex.test(value) ) {
+        if( (shortRegex.test(url) || urlRegex.test(url)) && sdkPath.length ) {
             isValid = true;
         }
         return isValid;
+    }
+    
+    /**
+     * @private
+     * Special handler for fiddle form path selector
+     * @param {Event} e The button click event
+     */
+    function _selectPathForField(e) {
+        e.preventDefault();
+        var $sdkpathField = $('.sdk-path'),
+            callback = function(error, dirs) {
+                if (!error && dirs.length > 0) {
+                    var dir = dirs.pop();
+                    $sdkpathField.val(dir).change();
+                }
+            };
+        _showPathSelector('Select SDK Path', callback);       
+    }
+    
+    /**
+     * @private
+     * Toggles download button state based on validity of form
+     * @param {Event} e The event which triggers this handler
+     */
+    function _toggleFiddleDownloadButton(e) {
+        var isValid = _validateFiddleURL(),
+            $downloadButton = $('.download-button');
+        // toggle button disabled state
+        if(isValid) {
+            $downloadButton.prop("disabled",false);
+        }
+        else {
+            $downloadButton.prop("disabled",true);
+        }
     }
     
     /**
@@ -88,35 +186,37 @@ define(function(require, exports, module) {
      */
     function _getFiddleURL(path) {
         var modalTemplate = require('text!templates/fiddle/downloadModal.html'),
-            dialog = Dialogs.showModalDialogUsingTemplate(modalTemplate),
+            renderedTemplate = Mustache.render(modalTemplate, {path:path}),
+            dialog = Dialogs.showModalDialogUsingTemplate(renderedTemplate),
             $element = dialog.getElement(),
             $urlField = $element.find('.fiddle-url'),
-            $downloadButton = $element.find('.download-button');
+            $sdkpathField = $element.find('.sdk-path'),
+            $downloadButton = $element.find('.download-button'),
+            $pathButton = $element.find('.path-button'),
+            $clearButton = $element.find('.clear-button'),
+            clearHandler = function(e) {
+                $(this).prev().val('');
+                e.preventDefault();
+                return false;
+            };
         // focus urlfield right away
         $urlField.focus();
         // add listeners
         // on keyup, check if entry is valid
-        $urlField.on('keyup', function(e) {
-            var $fld = $(this),
-                value = $fld.val(),
-                isValid = _validateFiddleURL(value);
-            // toggle button disabled state
-            if(isValid) {
-                $downloadButton.prop("disabled",false);
-            }
-            else {
-                $downloadButton.prop("disabled",true);
-            }
-        });
+        $urlField.on('keyup', _toggleFiddleDownloadButton);
+        $sdkpathField.on('change', _toggleFiddleDownloadButton);
+        $pathButton.on('click', _selectPathForField);
+        $clearButton.on('click', clearHandler);
         // on click, we have a valid value; download the fiddle
         $downloadButton.on('click', function (e) {
             var $fld = $(this),
                 value = $urlField.val(), 
+                sdkValue = $sdkpathField.val(),
                 url = value.length==3 ? baseURL + value : value,
                 // convert url to the correct api version
                 finalUrl = url.replace('#fiddle', 'export');
             // do the business
-            _downloadFiddleContent(path,finalUrl);
+            _downloadFiddleContent(path, finalUrl, sdkValue);
         });
     }
     
@@ -128,11 +228,12 @@ define(function(require, exports, module) {
      */
     function _getFiddleVersion(html) {
         var version = false,
-            firstScript = html.match(/<script.*<\/script>/);
+            firstScript = html.match(/<script.*<\/script>/),
+            key, regex;
         // did we match something?
         if(firstScript.length) {
-            for( var key in sdkURLs ) {
-                var regex = new RegExp(key);
+            for( key in sdks ) {
+                regex = new RegExp(key);
                 // does first script src contain a version number?
                 if(firstScript[0].search(regex) != -1) {
                     version = key;
@@ -148,15 +249,18 @@ define(function(require, exports, module) {
      * Replaces sdk urls in downloaded fiddle content with local sdk urls
      * @param {String} html The html in which the replacements will be made
      * @param {String} version The version of the sdk in the downloaded fiddle
+     * @param {String} sdkPath The path to the SDK
      * @return {String}
      */
-    function _replaceRemoteUrls(html, version) {
-        var replaceURL = new RegExp(sdkURLs[version], 'g'),
+    function _replaceRemoteUrls(html, version, sdkPath) {
+        var sdk = sdks[version],
+            replaceURL = new RegExp(sdk.remote, 'g'),
             webserverPath = prefs.get('webserver_path'),
-            sdkPath = prefs.get('sdk_path_' + version),
             pathRegex = new RegExp(webserverPath),
-            webpath = sdkPath.replace(pathRegex, '');
-        return html.replace(replaceURL, 'http://localhost' + webpath);
+            webpath = sdkPath.replace(pathRegex, ''),
+            hostname = prefs.get('webserver_url') || 'http://localhost';
+        // replace remote urls with local ones
+        return html.replace(replaceURL, hostname + webpath);
     }
     
     /**
@@ -190,43 +294,6 @@ define(function(require, exports, module) {
             _showPathSelector('Path to webserver root', callback);
         }
         
-        // return a promise which will be resolved either immediately becuase a path exists,
-        // or because the user selects one via the showOpenDialog()
-        return deferred.promise();
-    }
-    
-    /**
-     * @private
-     * Promise used to asynchronously retrieve and/or set the webserver path 
-     * preference based on user selection
-     * @param {String} version The version of the fiddle's sdk
-     */
-    function _resolveSDKPath(version) {
-        var sdkPath = prefs.get('sdk_path_' + version) || false,
-            deferred = new $.Deferred(),
-            message = 'You haven\'t defined an SDK path for '+ version +'. Please provide the path to the directory, relative to your web root, where this SDK can be found',
-            callback = function(error, dirs) {
-                if (!error && dirs.length > 0) {
-                    var dir = dirs.pop();
-                    prefs.set('sdk_path_' + version, dir);
-                    deferred.resolve(dir);
-                }
-            };
-        // if sdk path is defined, resolve; otherwise, just show selector
-        if(sdkPath) {
-            FileSystem.resolve(sdkPath, function(error) {
-                if (error) {
-                    alert(message);
-                    _showPathSelector('Path to ' + version + ' SDK', callback);
-                } else {
-                    deferred.resolve(sdkPath);
-                }
-            });
-        }
-        else {
-            alert(message);
-            _showPathSelector('Path to ' + version + ' SDK', callback);
-        }
         // return a promise which will be resolved either immediately becuase a path exists,
         // or because the user selects one via the showOpenDialog()
         return deferred.promise();
@@ -303,7 +370,7 @@ define(function(require, exports, module) {
      * this method will do the heavy lifting of creating the fiddle content on the machine
      * @param {Object} fiddle The downloaded and decoded fiddle content
      * @param {String} path The path selected by the user where the fiddle should be written
-     * @version {String} version The version of the SDK to use
+     * @param {String} version The version of the SDK to use
      */
     function _createLocalFiddle(fiddle, path, version) {
         var assets = fiddle.assets,
@@ -324,7 +391,7 @@ define(function(require, exports, module) {
             if( !urlregex.test(asset.name) ) {
                 // replace index.html urls to use local ones
                 if(asset.name == 'index.html') {
-                    asset.code = _replaceRemoteUrls(asset.code,version)
+                    asset.code = _replaceRemoteUrls(asset.code,version, fiddle.sdkPath)
                 }
                 _writeLocalAsset(asset.name, asset.code, rootPath);
             }
@@ -340,13 +407,10 @@ define(function(require, exports, module) {
      * @private
      * This method will check the version of the fiddle and ensure that:
      *
-     * 1.) A web server path preference has been set AND
-     * 2.) A sdk path preference has been set for the given version
+     * 1.) A web server path preference has been set
      *
-     * In both cases, the answer could be "no", so this incorporates Deferred()
-     * so that we can allow each async path selection to complete,
-     * but still do them in order and only after they are complete
-     * will we actually process the fiddle and write it to file
+     * In this case, the answer could be "no", so this incorporates Deferred()
+     * so that we can allow the async path selection to complete
      *
      * @param {Object} fiddle The downloaded, decoded fiddle content
      * @param {String} path The path selected from the context menu
@@ -359,8 +423,7 @@ define(function(require, exports, module) {
         indexAsset = _getIndexAsset(fiddle.assets);
         version = _getFiddleVersion(indexAsset.code);
          
-        // uncomment to debug webserver path/sdk path promises
-        //prefs.set('sdk_path_' + version, '');
+        // uncomment to debug webserver path promise
         //prefs.set('webserver_path', '');
         if(!version) {
             Dialogs.showModalDialog('', 'Whoops!', 'Sorry, the version used by the Fiddle is not available.');
@@ -370,12 +433,10 @@ define(function(require, exports, module) {
             prefsDeferred = $.Deferred()
             prefsDeferred.then(function() {
                 return _resolveWebserverPath();
-            }).then(function() {
-                return _resolveSDKPath(version);
             }).done(function() {
                 _createLocalFiddle(fiddle, path, version);                
             })
-            prefsDeferred.resolve();           
+            prefsDeferred.resolve();       
         } 
     }
     
@@ -384,12 +445,14 @@ define(function(require, exports, module) {
      * Retrieves fiddle data from web service
      * @param {String} path The path selected from the context menu
      * @param {String} url  The url of the fiddle to download
+     * @param {String} sdkPath Path to the SDK
      */
-    function _downloadFiddleContent(path, url) {
+    function _downloadFiddleContent(path, url, sdkPath) {
         $.ajax(url)
          .success(function(response, textStatus, jqXHR){
             var data = response.data;
             if(data.success && data.fiddle) {
+                data.fiddle.sdkPath = sdkPath;
                 _preFiddleCheck(data.fiddle, path);
             }
             else {
