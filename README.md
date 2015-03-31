@@ -8,6 +8,16 @@ Currenly, you can execute `sencha app refresh`, `sencha app build testing` and `
 
 Each time a command is executed, it will also find what version of Sencha Cmd the application is using via the `.sencha/app/sencha.cfg` file. Based on this version, it will attempt to resolve the path to Sencha Cmd. If the path is invalid, you will be asked for the location of the install directory wher eall the different Cmd versions are actually installed. For example, `/Users/myusername/bin/Sencha/Cmd` is the location on OSX. Now it should be able to find the Cmd install based on that version.
 
+## Sencha Fiddle
+
+Sencha Fiddle integration allows you to download a public Fiddle (by URL or Fiddle ID) and run it on your local web server using local versions of the Ext JS or Sencha Touch SDK that the Fiddle is using. 
+
+When downloading fiddles, you will be prompted to specify the location of your web root and SDK. The web root location "challenge" is one time, and your selection will be stored in preferences so you don't have to specify it in the future.
+
+## Preferences
+
+To manage your preferences, choose "Sencha Preferences..." from the context menu. This will display a preferences manager in which you can modify your preferences.
+
 ## TODO
 
  - Preferences UI
