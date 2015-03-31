@@ -12,7 +12,7 @@ Each time a command is executed, it will also find what version of Sencha Cmd th
 
 Sencha Fiddle integration allows you to download a public Fiddle (by URL or Fiddle ID) and run it on your local web server using local versions of the Ext JS or Sencha Touch SDK that the Fiddle is using. 
 
-When downloading fiddles, you will be prompted to specify the location of your web root and SDK. The web root location "challenge" is one time, and your selection will be stored in preferences so you don't have to specify it in the future. Each SDK version will also ask you to specify a location, but each selection will also be saved after the first time.
+When downloading fiddles, you will be prompted to specify the location of your web root and SDK. The web root location "challenge" is one time, and your selection will be stored in preferences so you don't have to specify it in the future.
 
 ## Preferences
 
