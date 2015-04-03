@@ -9,9 +9,9 @@
                 {{#preferences}}
                     <div class="input-group">
                         <label for="{{key}}">{{label}}</label>
-                        {{#isText}}
+                        {{#isString}}
                         <input type="text" name="{{key}}" style="width:300px;" class="form-control" value="{{value}}">
-                        {{/isText}}
+                        {{/isString}}
                         {{#isBoolean}}
                         <select name="{{key}}" style="width:300px;" class="form-control" value="{{value}}">
                             {{#booleanOptions}}

@@ -6,6 +6,7 @@ define(function(require, exports) {
 
     var CommandManager = brackets.getModule('command/CommandManager'),
         Menus          = brackets.getModule('command/Menus'),
+        ContextMenuIds = Menus.ContextMenuIds,
         _registered    = {},
         _listened      = {};
 
@@ -67,18 +68,34 @@ define(function(require, exports) {
     function _addMenu(menus, item) {
         var i      = 0,
             length = menus.length,
-            name, menu;
+            name, menu, isContext;
 
         for (; i < length; i++) {
             name = menus[i];
-            menu = Menus.getContextMenu(Menus.ContextMenuIds[name]);
+            menu = ContextMenuIds[name];
+
+            if (menu) {
+                isContext = true;
+                menu      = Menus.getContextMenu(Menus.ContextMenuIds[name]);
+            } else {
+                isContext = false;
+                menu      = Menus.getMenu(name);
+            }
 
             menus[i] = menu;
 
-            if (!_listened[name]) {
-                menu.on('beforeContextMenuOpen', _onBeforeMenuOpen);
+            if (isContext) {
+                if (!_listened[name]) {
+                    menu.on('beforeContextMenuOpen', _onBeforeMenuOpen);
 
-                _listened[name] = true;
+                    _listened[name] = true;
+                }
+            } else {
+                if (item.divider) {
+                    menu.addMenuDivider('before', item.divider);
+                } else {
+                    menu.addMenuItem(item.name);
+                }
             }
         }
     }
@@ -96,7 +113,7 @@ define(function(require, exports) {
 
             if (item.name) {
                 if (item.divider) {
-                    _addMenu(item.menu, '-');
+                    _addMenu(item.menu, item);
                 } else if (item.label && item.fn) {
                     if (!_registered[item.name]) {
                         _registerCommand(item.label, item.name, item.fn);

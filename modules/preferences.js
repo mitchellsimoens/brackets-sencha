@@ -11,82 +11,113 @@ define(function(require, exports) {
         prefs              = PreferencesManager.getExtensionPrefs('brackets-sencha'),
         prefsConfig,
         prefsGroups;
-    
+
     function init(config) {
-        var key,
-            item;
+        var key, item;
+
         // groups we want to track for preferences
         prefsGroups = [
-            {name: 'cmd',      label: 'Sencha Cmd'},
-            {name: 'fiddle',   label: 'Fiddle'}
+            { name : 'cmd',      label : 'Sencha Cmd' },
+            { name : 'fiddle',   label : 'Fiddle'     }
         ];
+
         /**
          * Main repository of preferences for the application
          * When this module initializes, it will loop over this list and call the necessary "definePreference" for each
-         * 
+         *
          * Each preference config should include:
          * - key (the key within this object)
          * - type (type used in definePreference)
          * - default (default value used in definePreference)
-         * - inputType (type of input to create on the manager form; valid values are "path", "boolean")
+         * - inputType (type of input to create on the manager form; if not present, will take on the type value; valid values are "path", "boolean", "string")
          * - group (key of the group to which this preference should be belong; see "prefGroups" for valid group keys)
          * - label (label to be used when rendering the form field/label on the manager form)
          */
         prefsConfig = {
-            'cmd_root': {
-                type: 'string', default: user.replace('/Documents', ''), inputType: 'path', group: 'cmd', label: 'Sencha Cmd Root'
+            'cmd_root'              : {
+                type      : 'string',
+                default   : user.replace('/Documents', ''),
+                group     : 'cmd',
+                label     : 'Sencha Cmd Root',
+                inputType : 'path'
             },
-            'close_on_success': {
-                type: 'boolean',default: '', inputType: 'boolean',  group: 'cmd',    label: 'Close on Success'
+            'close_on_success'      : {
+                type    : 'boolean',
+                default : true,
+                group   : 'cmd',
+                label   : 'Close Output Panel on Success'
             },
-            'webserver_path': {
-                type: 'string', default: '', inputType: 'path',     group: 'fiddle', label: 'Local Webserver Path'
+            'sdk_tpl'               : {
+                type    : 'string',
+                default : 'http://localhost/sdk/{framework}/{full_version}',
+                group   : 'fiddle',
+                label   : 'SDK Url Template'
             },
-            'webserver_url': {
-                type: 'string', default: '', inputType: 'text',   group: 'fiddle', label: 'Local Webserver URL'
+            'fiddle_replace_remote' : {
+                type    : 'boolean',
+                default : true,
+                group   : 'fiddle',
+                label   : 'Replace Remote URIs With Local'
+            },
+            'fiddle_onready_wrap'   : {
+                type    : 'boolean',
+                default : true,
+                group   : 'fiddle',
+                label   : 'Wrap File Source in Ext.onReady'
             }
         };
+
         // loop over defs and define them
-        for(key in prefsConfig) {
+        for (key in prefsConfig) {
             item = prefsConfig[key];
+
             prefs.definePreference(key, item.type, item.default);
-        } 
+        }
+
         config.MenuManager.addMenus([
             {
                 name     : 'sencha.preferences.edit',
                 label    : 'Sencha Preferences...',
                 menu     : [
-                    'PROJECT_MENU',
-                    'WORKING_SET_CONTEXT_MENU'
+                    'edit-menu'
                 ],
-                fn       : function() {
-                    _showPreferencesDialog();
-                }
+                fn       : _showPreferencesDialog
+            },
+            {
+                divider : 'sencha.preferences.edit',
+                name    : 'sencha.preferences.divider',
+                menu    : [
+                    'edit-menu'
+                ]
             }
         ]);
     }
-    
+
     /**
      * @private
      * Saves preferences defined in form
      * @param {Event} e The click event from the save button
      */
     function _savePreferences(e) {
-        var $form = $('#preferences_form'),
+        var $form  = $('#preferences_form'),
             values = $form.serializeArray(),
-            i=0,
-            prefConfig,pref,value
-        for(; i<values.length; i++) {
-            pref = values[i];
+            i      = 0,
+            length = values.length,
+            prefConfig,pref,value;
+
+        for(; i < length; i++) {
+            pref       = values[i];
             prefConfig = prefsConfig[pref.name];
-            value = pref.value;
-            if(prefConfig.type && prefConfig.type==='boolean') {
+            value      = pref.value;
+
+            if (prefConfig.type && prefConfig.type==='boolean') {
                 value = (value === 'true');
             }
+
             prefs.set(pref.name, value);
         }
     }
-    
+
     /**
      * @private
      * Creates a modal with promise for path selection
@@ -94,19 +125,26 @@ define(function(require, exports) {
      */
     function _showPathSelector(e) {
         var $button = $(this),
-            $fld = $button.prev(),
+            $fld    = $button.prev(),
             deferred;
+
         e.preventDefault();
-        deferred = $.Deferred()
-        deferred.then(function() {
-            return _choosePath($fld.val());
-        }).done(function(dir) {
-            $fld.val(dir);              
-        })
+
+        deferred = $.Deferred();
+
+        deferred
+            .then(function() {
+                return _choosePath($fld.val());
+            })
+            .done(function(dir) {
+                $fld.val(dir);
+            });
+
         deferred.resolve();
+
         return false;
     }
-    
+
     /**
      * @private
      * Displays path selector modal
@@ -114,6 +152,7 @@ define(function(require, exports) {
      */
     function _choosePath(initialPath) {
         var deferred = new $.Deferred();
+
         FileSystem.showOpenDialog(
             false,
             true,
@@ -127,9 +166,10 @@ define(function(require, exports) {
                 }
             }
         );
-        return deferred.promise();   
+
+        return deferred.promise();
     }
-    
+
     /**
      * @private
      * Clears read-only field
@@ -137,72 +177,84 @@ define(function(require, exports) {
      */
     function _clearFieldValue(e) {
         var $button = $(this);
+
         $button.prev().val('');
+
         e.preventDefault();
+
         return false;
     }
-    
+
     /**
      * @private
      * Display user preferences for brackets-sencha
      */
     function _showPreferencesDialog() {
         var modalTemplate = require('text!templates/preferences/formModal.html'),
+            senchaPrefs   = [],
+            groups        = {},
             renderedTemplate,
             dialog,
             $element,
             $saveButton,
             $pathButtons,
             $clearButtons,
-            senchaPrefs = [],
-            groups={},
-            key,pref,group,i,value;
+            key, pref, group, value, type;
+
         // define groups
-        for(i in prefsGroups){
-            group = prefsGroups[i];
-            groups[group.name] = {
-                label: group.label,
-                preferences: []
+        for (key in prefsGroups) {
+            group = prefsGroups[key];
+
+            group = groups[group.name] = {
+                label       : group.label,
+                preferences : []
             };
+
+            //push to the array so Mustache can deal with it
+            senchaPrefs.push(group);
         }
+
         // create render definitions for each pref and put in correct group
-        for(key in prefsConfig) {
-            pref = prefsConfig[key];
+        for (key in prefsConfig) {
+            pref  = prefsConfig[key];
             value = prefs.get(key);
+            type  = pref.inputType || pref.type;
+
             groups[pref.group].preferences.push({
-                key: key,
-                value: value,
-                label: pref.label,
-                isPath: pref.inputType=='path',
-                isBoolean: pref.inputType=='boolean',
-                isText: pref.inputType=='text',
-                booleanOptions: [{
-                    value: true,
-                    text: 'Yes',
-                    selected: value
-                },{
-                    value: false,
-                    text: 'No',
-                    selected: !value
-                }]
+                key            : key,
+                value          : value,
+                label          : pref.label,
+                isPath         : type === 'path',
+                isBoolean      : type === 'boolean',
+                isString       : type === 'string',
+                booleanOptions : [
+                    {
+                        value    : true,
+                        text     : 'Yes',
+                        selected : value
+                    },
+                    {
+                        value    : false,
+                        text     : 'No',
+                        selected : !value
+                    }
+                ]
             });
         }
-        // flatten to an array so Mustache can handle them
-        for(key in groups){
-            senchaPrefs.push(groups[key]);
-        }
+
         // render with Mustache so we can handle *some* logic in the template
         renderedTemplate = Mustache.render(modalTemplate, {prefCollection: senchaPrefs});
-        dialog = Dialogs.showModalDialogUsingTemplate(renderedTemplate);
-        $element = dialog.getElement();
-        $saveButton = $element.find('.save-button');
-        $pathButtons = $element.find('.path-button');
-        $clearButtons = $element.find('.clear-button');
+        dialog           = Dialogs.showModalDialogUsingTemplate(renderedTemplate);
+        $element         = dialog.getElement();
+        $saveButton      = $element.find('.save-button');
+        $pathButtons     = $element.find('.path-button');
+        $clearButtons    = $element.find('.clear-button');
+
         // add event listeners to elements
-        $saveButton.on('click', _savePreferences);
-        $pathButtons.on('click', _showPathSelector);
+        $saveButton  .on('click', _savePreferences);
+        $pathButtons .on('click', _showPathSelector);
         $clearButtons.on('click', _clearFieldValue);
     }
-    
+
     exports.init = init;
 });
