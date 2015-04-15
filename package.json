@@ -4,7 +4,11 @@
     "description": "Extension to integrate Sencha products into Brackets.",
     "homepage": "https://github.com/mitchellsimoens/brackets-sencha",
     "version": "0.1.3",
-    "author": "Mitchell Simoens <mitchellsimoens@gmail.com> (https://www.mitchellsimoens.com)",
+    "author": {
+        "name": "Mitchell Simoens",
+        "email": "mitchellsimoens@gmail.com",
+        "url": "https://github.com/mitchellsimoens"
+    },
     "license": "MIT",
     "engines": {
         "brackets": ">=0.24.0"
