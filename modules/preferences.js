@@ -47,12 +47,6 @@ define(function(require, exports) {
                 group   : 'cmd',
                 label   : 'Close Output Panel on Success'
             },
-            'sdk_tpl'               : {
-                type    : 'string',
-                default : 'http://localhost/sdk/{framework}/{full_version}',
-                group   : 'fiddle',
-                label   : 'SDK Url Template'
-            },
             'fiddle_replace_remote' : {
                 type    : 'boolean',
                 default : true,
@@ -64,6 +58,13 @@ define(function(require, exports) {
                 default : true,
                 group   : 'fiddle',
                 label   : 'Wrap File Source in Ext.onReady'
+            },
+            'sdk_tpl'               : {
+                type    : 'string',
+                default : 'http://localhost/sdk/{framework}/{full_version}',
+                group   : 'fiddle',
+                label   : 'SDK Url Template',
+                under   : 'Options:<ul><li>{framework}</li><li>{version}</li><li>{short_version}</li><li>{label}</li></ul>'
             }
         };
 
@@ -227,6 +228,7 @@ define(function(require, exports) {
                 isPath         : type === 'path',
                 isBoolean      : type === 'boolean',
                 isString       : type === 'string',
+                under          : pref.under,
                 booleanOptions : [
                     {
                         value    : true,
