@@ -342,7 +342,8 @@ define(function(require, exports, module) {
             folder, folderPath,
             fileName, file;
 
-        if (prefs.get('fiddle_onready_wrap')) {
+        //TODO fiddle needs to provide the actual type of file instead of relying on the name
+        if (prefs.get('fiddle_onready_wrap') && name.substr(-2).toLowerCase() === 'js') {
             content = 'Ext.onReady(function() {\n\n' + content + '\n\n});';
         }
 
@@ -400,7 +401,7 @@ define(function(require, exports, module) {
             if (!urlregex.test(asset.name)) {
                 // replace index.html urls to use local ones
                 if (asset.name === 'index.html' && doRemoteReplace) {
-                    asset.code = _replaceRemoteUrls(asset.code,version)
+                    asset.code = _replaceRemoteUrls(asset.code, version)
                 }
 
                 _writeLocalAsset(asset.name, asset.code, rootPath);
