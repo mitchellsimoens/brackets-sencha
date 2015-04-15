@@ -281,8 +281,10 @@ define(function(require, exports, module) {
             sdkTpl        = prefs.get('sdk_tpl'),
             replaceURL    = new RegExp(sdk.remote, 'g'),
             path          = sdkTpl
-                .replace('{framework}',    sdk.framework)
-                .replace('{full_version}', sdk.full_version);
+                .replace( '{framework}',     sdk.framework    )
+                .replace( '{full_version}',  sdk.full_version )
+                .replace( '{short_version}', version          )
+                .replace( '{label}',         sdk.label        );
 
         // replace remote urls with local ones
         return html.replace(replaceURL, path);
