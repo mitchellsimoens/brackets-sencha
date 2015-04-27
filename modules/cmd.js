@@ -365,7 +365,7 @@ define(function(require, exports) {
                     'WORKING_SET_CONTEXT_MENU'
                 ],
                 fn       : function() {
-                    _handleCmdCommand('sencha app refresh', false);
+                    _handleCmdCommand('sencha app refresh', false, _selectBuild());
                 }
             },
             {
@@ -428,7 +428,7 @@ define(function(require, exports) {
                     'EDITOR_MENU'
                 ],
                 fn       : function() {
-                    _handleCmdCommand('sencha app refresh', true);
+                    _handleCmdCommand('sencha app refresh', true, _selectBuild());
                 }
             },
             {
