@@ -26,6 +26,8 @@ define(function(require, exports) {
 
     function _show() {
         OutputPanel.show();
+
+        _scrollToBottom();
     }
 
     function _clear() {
@@ -76,7 +78,7 @@ define(function(require, exports) {
         return $(div);
     }
 
-    function init() {
+    function init(config) {
         var _outputPanelHtml = require('text!../templates/output/outputPanel.html');
 
         OutputPanel = WorkspaceManager.createBottomPanel('sencha.cmd.output.panel', $(_outputPanelHtml), 250);
@@ -84,8 +86,8 @@ define(function(require, exports) {
         AppInit.appReady(function () {
             closeOnSuccessEl.prop('checked', prefs.get('close_on_success'));
 
-            clearEl.click(_clear);
             closeEl.click(_toggle);
+
             closeOnSuccessEl.click(_closeOnSuccessClick);
         });
 
@@ -93,6 +95,25 @@ define(function(require, exports) {
         closeEl          = $('.close',            OutputPanel.$panel);
         closeOnSuccessEl = $('#close_on_success', OutputPanel.$panel);
         stopEl           = $('.stop',             OutputPanel.$panel);
+
+        config.MenuManager.addMenus([
+            {
+                name       : 'sencha.console.show',
+                label      : 'Show Sencha Console',
+                keyBinding : 'Ctrl-Alt-C',
+                fn         : _show,
+                menu       : [
+                    'view-menu'
+                ]
+            },
+            {
+                divider : 'sencha.console.show',
+                name    : 'sencha.console.divider',
+                menu    : [
+                    'view-menu'
+                ]
+            }
+        ]);
 
         return {
             append       : _append,

@@ -11,6 +11,17 @@ define(function(require, exports) {
         _listened      = {};
 
     /**
+     * menu IDs:
+     * debug-menu
+     * edit-menu
+     * file-menu
+     * find-menu
+     * help-menu
+     * navigate-menu
+     * view-menu
+     */
+
+    /**
      * context menu IDs:
      * EDITOR_MENU
      * INLINE_EDITOR_MENU
@@ -49,7 +60,7 @@ define(function(require, exports) {
                         if (divider) {
                             item = menu.addMenuDivider('before', divider);
                         } else {
-                            item = menu.addMenuItem(name);
+                            item = menu.addMenuItem(name, cfg.keyBinding);
                         }
 
                         cfg.lastId = item.id
@@ -94,7 +105,7 @@ define(function(require, exports) {
                 if (item.divider) {
                     menu.addMenuDivider('before', item.divider);
                 } else {
-                    menu.addMenuItem(item.name);
+                    menu.addMenuItem(item.name, item.keyBinding);
                 }
             }
         }
