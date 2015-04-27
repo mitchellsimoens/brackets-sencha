@@ -121,59 +121,78 @@ define(function(require, exports) {
             }
         });
     }
-    
+
     /**
      * Takes raw read content of app.json and turns it into an object, if possible
      * @param {String} content The raw app.json string content to parse
      * @return {Object}
      */
     function _getAppJsonAsObject(content) {
-        var cleanerRegex = /(\/\*([\s\S]*?)\*\/)|(\/\/(.*)$)/gm,
-            convertedJson= {},
-            cleaned;
+        var cleanerRegex  = /(\/\*([\s\S]*?)\*\/)|(\/\/(.*)$)/gm,
+            convertedJson, cleaned;
+
         try {
             // remove JS comments
-            cleaned = content.replace(cleanerRegex,'');
+            cleaned       = content.replace(cleanerRegex, '');
             convertedJson = JSON.parse(cleaned);
         }
         catch(e) {
-            console.log( e);
+            convertedJson = {};
+
+            console.log(e);
         }
+
         return convertedJson;
     }
-    
+
     /**
-     * Master promise maker for selecting a build (if possible)
-     * @param {String} cmd The command to run
-     * @param {Object} dir The root directory where the .sencha folder resides
-     * @param {String} version Version of Sencha Cmd being used
-     * @return {Promise}
+     * Master promise maker for selecting a build (if possible).
+     * @param {Object} options Options to be used for the preprocessor.
+     *  - **buildRequired** : If `true`, require a build to be selected. This will not show the none option.
+     * @return {Function}
      */
-    function _selectBuild(cmd, dir, version) {
-        var deferred = $.Deferred(),
-            builds = {};
-        // order of ops: find the app.json file, select a build, return new cmd string
-        $.when().then(function() {
-            // get app.json object
-            return _findAppJson(dir);
-        }).then(function(appJson){
-            builds = appJson.builds || builds;
-            if( Object.keys(builds).length > 1 ) {
-                // if we have more than one key in our object, show selector
-                return _showAppBuildSelectionDialog(builds);
-            }
-            else {
-                return '';
-            }
-        }).done(function(build) {
-            // concat cmd with build option, if needed
-            cmd = !build ? cmd : cmd += ' -build=' + build;
-            // resolve the promise
-            deferred.resolve(cmd, dir, version);
-        });
-        return deferred.promise();
+    function _selectBuild(options) {
+        options = options || {};
+
+        /**
+         * @param {String} cmd The command to run
+         * @param {Object} dir The root directory where the .sencha folder resides
+         * @param {String} version Version of Sencha Cmd being used
+         * @return {Promise}
+         */
+        return function(cmd, dir, version) {
+            var deferred = $.Deferred();
+
+            // order of ops: find the app.json file, select a build, return new cmd string
+            $.when()
+                .then(function() {
+                    // get app.json object
+                    return _findAppJson(dir);
+                })
+                .then(function(appJson){
+                    var builds = appJson.builds,
+                        show   = builds && Object.keys(builds).length > 1;
+
+                    if (show && !options.buildRequired) {
+                        builds['none (all)'] = null;
+                    }
+
+                    return show ? _showAppBuildSelectionDialog(builds) : '';
+                })
+                .done(function(build) {
+                    if (build && build !== 'none (all)') {
+                        // concat cmd with build option, if needed
+                        cmd += ' ' + build;
+                    }
+
+                    // resolve the promise
+                    deferred.resolve(cmd, dir, version);
+                });
+
+            return deferred.promise();
+        }
     }
-    
+
     /**
      * Simple method which displays popup modal for selecting a build
      * @param {Object} builds The available builds for the current app
@@ -181,39 +200,42 @@ define(function(require, exports) {
      */
     function _showAppBuildSelectionDialog(builds) {
         var modalTemplate = require('text!templates/cmd/buildSelectorModal.html'),
-            buildArray = [],
-            deferred = $.Deferred(),
+            buildArray    = [],
+            deferred      = $.Deferred(),
             renderedTemplate,
             dialog,
             $element,
             $selectBuild,
             $selectButton,
             key;
-        
+
         // convert keys to array for mustache
-        for( key in builds ) {
+        for(key in builds) {
             buildArray.push(key);
         }
-        renderedTemplate = Mustache.render(modalTemplate, {builds: buildArray});
-        dialog = Dialogs.showModalDialogUsingTemplate(renderedTemplate);
-        $element = dialog.getElement();
-        $selectButton = $element.find('.select-button');
-        $selectBuild = $element.find('#build_name');
+
+        renderedTemplate = Mustache.render(modalTemplate, { builds : buildArray });
+        dialog           = Dialogs.showModalDialogUsingTemplate(renderedTemplate);
+        $element         = dialog.getElement();
+        $selectButton    = $element.find('.select-button');
+        $selectBuild     = $element.find('#build_name');
+
         // add event listeners to elements
         $selectButton.on('click', function(){
             deferred.resolve($selectBuild.val());
         });
+
         return deferred.promise();
     }
-    
+
     /**
      * Tries to find an app.json file relative to the .sencha cfg directory
      * @param {Object} dir The .sencha directory
      * @return {Promise}
      */
     function _findAppJson(dir) {
-        var deferred = $.Deferred(),
-            appJson = {};
+        var deferred = $.Deferred();
+
         dir.getContents(function(error, contents) {
             if (error) {
                 //error handling, couldn't get contents of directory
@@ -221,38 +243,34 @@ define(function(require, exports) {
                 var i      = 0,
                     length = contents.length,
                     item,
-                    appObject,
                     builds;
 
                 for (; i < length; i++) {
                     item = contents[i];
+
                     if (item.name === 'app.json') {
                         item.read(function(error, source) {
+                            var appJson;
+
                             if (error) {
                                 alert('There was an error reading the app.json file. Error: ' + error);
                             } else {
-                                try {
-                                    // try to transform the source into an app.json object
-                                    appObject = _getAppJsonAsObject(source);
-                                    if(appObject) {
-                                        appJson = appObject;
-                                    }
-                                }
-                                catch(e) {
-                                    // just let it go
-                                    console.log(e);
-                                }
+                                // try to transform the source into an app.json object
+                                appJson = _getAppJsonAsObject(source);
                             }
-                            deferred.resolve(appJson);
+
+                            deferred.resolve(appJson || {});
                         });
+
                         break;
-                    } 
+                    }
                 }
             }
         });
+
         return deferred.promise();
     }
-    
+
     /**
      * An empty promise to normalize handling of the preprocessor paradigm
      * @param {String} cmd The command to run
@@ -262,10 +280,12 @@ define(function(require, exports) {
      */
     function _emptyPromise(cmd, dir, version) {
         var deferred = $.Deferred();
+
         deferred.resolve(cmd, dir, version);
+
         return deferred.promise();
     }
-    
+
     /**
      * Main method for marshalling context menu selections and sending them off to execute the commands
      * @param {String} cmd The command to execute
@@ -273,13 +293,9 @@ define(function(require, exports) {
      * @param {Function} preprocessor An options preprocessor method that can further manipulate the command
      */
     function _handleCmdCommand(cmd, inEditor, preprocessor) {
-        var deferred,
-            me = this;
-        if (inEditor) {
-            var selected = DocumentManager.getCurrentDocument().file;
-        } else {
-            var selected = ProjectManager.getSelectedItem();
-        }
+        var me       = this,
+            selected = inEditor ? DocumentManager.getCurrentDocument().file : ProjectManager.getSelectedItem(),
+            deferred;
 
         _findAppDir(selected, null, function(dir, SenchaCfg) {
             if (dir && SenchaCfg) {
@@ -290,30 +306,31 @@ define(function(require, exports) {
                         var version = source.match(/app.cmd.version=(.+)/m)[1];
 
                         if (version) {
-                            deferred = $.Deferred();
+                            deferred     = $.Deferred();
                             // if we have a preprocessor, use it; otherwise, create an empty promise (sadpanda)
                             preprocessor = preprocessor || _emptyPromise;
+
                             // execute promise chain
                             deferred
-                            .then(function(){
-                                // execute preprocessor
-                                return preprocessor.call(me, cmd, dir, version);
-                            }).done(function(cmd, dir, version) {
-                                // promise if fulfilled; execute command
-                                _doCmdCommand(cmd, dir.fullPath, version);
-                            });
+                                .then(function(){
+                                    // execute preprocessor
+                                    return preprocessor.call(me, cmd, dir, version);
+                                })
+                                .done(function(cmd, dir, version) {
+                                    // promise if fulfilled; execute command
+                                    _doCmdCommand(cmd, dir.fullPath, version);
+                                });
+
                             deferred.resolve();
                         } else {
                             alert('Could not detect what Sencha Cmd version this application is using. Could this not be a Sencha Cmd application?');
                         }
                     }
                 });
-            } else {
-                if (!dir) {
-                    alert('Could not detect the application directory. Could this not be a Sencha Cmd application?');
-                } else if (!SenchaCfg) {
-                    alert('Could not detect the .sencha directory Sencha Cmd creates. Could this not be a Sencha Cmd application?');
-                }
+            } else if (!dir) {
+                alert('Could not detect the application directory. Could this not be a Sencha Cmd application?');
+            } else if (!SenchaCfg) {
+                alert('Could not detect the .sencha directory Sencha Cmd creates. Could this not be a Sencha Cmd application?');
             }
         })
     }
@@ -359,7 +376,9 @@ define(function(require, exports) {
                     'WORKING_SET_CONTEXT_MENU'
                 ],
                 fn       : function() {
-                    _handleCmdCommand('sencha app watch', false, _selectBuild);
+                    _handleCmdCommand('sencha app watch', false, _selectBuild({
+                        buildRequired : true
+                    }));
                 }
             },
             {
@@ -370,7 +389,7 @@ define(function(require, exports) {
                     'WORKING_SET_CONTEXT_MENU'
                 ],
                 fn       : function() {
-                    _handleCmdCommand('sencha app build production', false);
+                    _handleCmdCommand('sencha app build production', false, _selectBuild());
                 }
             },
             {
@@ -381,7 +400,7 @@ define(function(require, exports) {
                     'WORKING_SET_CONTEXT_MENU'
                 ],
                 fn       : function() {
-                    _handleCmdCommand('sencha app build testing', false);
+                    _handleCmdCommand('sencha app build testing', false, _selectBuild());
                 }
             }
         ]);
@@ -419,7 +438,9 @@ define(function(require, exports) {
                     'EDITOR_MENU'
                 ],
                 fn       : function() {
-                    _handleCmdCommand('sencha app watch', true, _selectBuild);
+                    _handleCmdCommand('sencha app watch', true, _selectBuild({
+                        buildRequired : true
+                    }));
                 }
             },
             {
@@ -429,7 +450,7 @@ define(function(require, exports) {
                     'EDITOR_MENU'
                 ],
                 fn       : function() {
-                    _handleCmdCommand('sencha app build production', true);
+                    _handleCmdCommand('sencha app build production', true, _selectBuild());
                 }
             },
             {
@@ -439,7 +460,7 @@ define(function(require, exports) {
                     'EDITOR_MENU'
                 ],
                 fn       : function() {
-                    _handleCmdCommand('sencha app build testing', true);
+                    _handleCmdCommand('sencha app build testing', true, _selectBuild());
                 }
             }
         ]);
