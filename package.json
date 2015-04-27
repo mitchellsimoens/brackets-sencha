@@ -3,7 +3,7 @@
     "title": "Sencha",
     "description": "Extension to integrate Sencha products into Brackets.",
     "homepage": "https://github.com/mitchellsimoens/brackets-sencha",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "author": {
         "name": "Mitchell Simoens",
         "email": "mitchellsimoens@gmail.com",
