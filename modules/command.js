@@ -7,6 +7,7 @@ define(function(require, exports, module) {
     var NodeDomain         = brackets.getModule('utils/NodeDomain'),
         ExtensionUtils     = brackets.getModule('utils/ExtensionUtils'),
         PreferencesManager = brackets.getModule('preferences/PreferencesManager'),
+        ProjectManager     = brackets.getModule("project/ProjectManager"),
         prefs              = PreferencesManager.getExtensionPrefs('brackets-sencha'),
         isWin              = brackets.platform === 'win',
         shell              = isWin ? 'cmd.exe' : '/bin/bash',
@@ -113,6 +114,10 @@ define(function(require, exports, module) {
         initDomain();
 
         _stopEl.click(_stop);
+
+        $(ProjectManager).on('beforeAppClose', function() {
+            _domain.exec('kill');
+        });
 
         return {
             exec : _execute
