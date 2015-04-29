@@ -39,32 +39,44 @@ define(function(require, exports) {
                 default   : user.replace('/Documents', ''),
                 group     : 'cmd',
                 label     : 'Sencha Cmd Root',
-                inputType : 'path'
+                inputType : 'path',
+                editable  : true
             },
             'close_on_success'      : {
                 type    : 'boolean',
                 default : true,
                 group   : 'cmd',
-                label   : 'Close Output Panel on Success'
+                label   : 'Close Output Panel on Success',
+                editable: true
+            },
+            'user_cmds'      : {
+                type    : 'object',
+                default : {},
+                group   : 'cmd',
+                label   : 'User-defined Cmd Recipes',
+                editable: false
             },
             'fiddle_replace_remote' : {
                 type    : 'boolean',
                 default : true,
                 group   : 'fiddle',
-                label   : 'Replace Remote URIs With Local'
+                label   : 'Replace Remote URIs With Local',
+                editable: true
             },
             'fiddle_onready_wrap'   : {
                 type    : 'boolean',
                 default : true,
                 group   : 'fiddle',
-                label   : 'Wrap File Source in Ext.onReady'
+                label   : 'Wrap File Source in Ext.onReady',
+                editable: true
             },
             'sdk_tpl'               : {
                 type    : 'string',
                 default : 'http://localhost/sdk/{framework}/{full_version}',
                 group   : 'fiddle',
                 label   : 'SDK Url Template',
-                under   : 'Options:<ul><li>{framework}</li><li>{version}</li><li>{short_version}</li><li>{label}</li></ul>'
+                under   : 'Options:<ul><li>{framework}</li><li>{version}</li><li>{short_version}</li><li>{label}</li></ul>',
+                editable: true
             }
         };
 
@@ -220,28 +232,31 @@ define(function(require, exports) {
             pref  = prefsConfig[key];
             value = prefs.get(key);
             type  = pref.inputType || pref.type;
-
-            groups[pref.group].preferences.push({
-                key            : key,
-                value          : value,
-                label          : pref.label,
-                isPath         : type === 'path',
-                isBoolean      : type === 'boolean',
-                isString       : type === 'string',
-                under          : pref.under,
-                booleanOptions : [
-                    {
-                        value    : true,
-                        text     : 'Yes',
-                        selected : value
-                    },
-                    {
-                        value    : false,
-                        text     : 'No',
-                        selected : !value
-                    }
-                ]
-            });
+            
+            if(pref.editable) {
+                groups[pref.group].preferences.push({
+                    key            : key,
+                    value          : value,
+                    label          : pref.label,
+                    isPath         : type === 'path',
+                    isBoolean      : type === 'boolean',
+                    isString       : type === 'string',
+                    isEditable     : pref.editable,
+                    under          : pref.under,
+                    booleanOptions : [
+                        {
+                            value    : true,
+                            text     : 'Yes',
+                            selected : value
+                        },
+                        {
+                            value    : false,
+                            text     : 'No',
+                            selected : !value
+                        }
+                    ]
+                });
+            }
         }
 
         // render with Mustache so we can handle *some* logic in the template

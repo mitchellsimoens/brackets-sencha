@@ -1,0 +1,43 @@
+<div class="template modal" style="width: 650px;">
+    <div class="modal-header">
+        <h1 class="dialog-title">Select/Enter a Custom Command</h1>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="input-group">
+                <label for="global_cmd">User-defined Commands (click to select):</label>
+                <div style="max-height:180px;overflow-y:scroll;">
+                    <table width="100%" style="cursor:pointer;">
+                        <tr>
+                            <th style="text-align:left;color:#fafafa;background:#1a1a1a;border:solid 1px #1a1a1a;padding:3px 8px;">Name</th>
+                            <th style="text-align:left;color:#fafafa;background:#1a1a1a;border:solid 1px #1a1a1a;padding:3px 8px;" colspan="2">Command</th>
+                        </tr>
+                        {{#cmds}}
+                        <tr>
+                            <td style="border:solid 1px #1a1a1a ;padding:5px 8px;vertical-align:top;" width="150" class="chooser">{{name}}</td>
+                            <td style="border:solid 1px #1a1a1a ;padding:5px 8px;white-space: pre-wrap;font-family: 'Consolas';font-size: 12px;vertical-align:top;" class="chooser">{{value}}</td>
+                            <td style="border:solid 1px #1a1a1a ;padding:5px 8px;text-align:center;vertical-align:top;" width="45">
+                                <input type="hidden" name="delete_cmd" value="{{name}}" />
+                                <button class="btn btn-mini delete-button primary">Remove</button>
+                            </td>
+                        </tr>
+                        {{/cmds}}
+                    </table>
+                </div>
+            </div>
+            <hr style="border-top: 1px solid #000; border-bottom: 1px solid #333;" />
+            <div class="input-group">
+                <label for="custom_cmd">Enter Command:</label>
+                <textarea name="custom_cmd" id="custom_cmd" rows=5 style="width:98%;" class="form-control"></textarea>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div style="float:left;">
+            <span style="color:#999;display:inline-block;">Save As:</span> 
+            <input type="text" name="cmd_slug" id="cmd_slug" style="margin-bottom:0px;width:110px;" placeholder="Enter slug">
+        </div>
+        <button class="dialog-button btn " data-button-id="cancel">Cancel</button>
+        <button class="dialog-button btn execute-button primary" id="execute-button" data-button-id="execute-button" disabled>Run!</button>
+    </div>
+</div>
