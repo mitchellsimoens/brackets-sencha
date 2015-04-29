@@ -49,7 +49,7 @@ define(function(require, exports) {
                 label   : 'Close Output Panel on Success',
                 editable: true
             },
-            'user_cmds'      : {
+            'user_cmds'             : {
                 type    : 'object',
                 default : {},
                 group   : 'cmd',
@@ -89,12 +89,12 @@ define(function(require, exports) {
 
         config.MenuManager.addMenus([
             {
-                name     : 'sencha.preferences.edit',
-                label    : 'Sencha Preferences...',
-                menu     : [
+                name  : 'sencha.preferences.edit',
+                label : 'Sencha Preferences...',
+                fn    : _showPreferencesDialog,
+                menu  : [
                     'edit-menu'
-                ],
-                fn       : _showPreferencesDialog
+                ]
             },
             {
                 divider : 'sencha.preferences.edit',
@@ -118,7 +118,7 @@ define(function(require, exports) {
             length = values.length,
             prefConfig,pref,value;
 
-        for(; i < length; i++) {
+        for (; i < length; i++) {
             pref       = values[i];
             prefConfig = prefsConfig[pref.name];
             value      = pref.value;
@@ -172,9 +172,10 @@ define(function(require, exports) {
             'Select a new path',
             initialPath,
             null,
-            function(error, dirs) {
-                if (!error && dirs.length > 0) {
-                    var dir = dirs.pop();
+            function(error, dir) {
+                if (!error && dir.length > 0) {
+                    dir = dir.pop();
+
                     deferred.resolve(dir);
                 }
             }
@@ -232,7 +233,7 @@ define(function(require, exports) {
             pref  = prefsConfig[key];
             value = prefs.get(key);
             type  = pref.inputType || pref.type;
-            
+
             if(pref.editable) {
                 groups[pref.group].preferences.push({
                     key            : key,
@@ -260,7 +261,7 @@ define(function(require, exports) {
         }
 
         // render with Mustache so we can handle *some* logic in the template
-        renderedTemplate = Mustache.render(modalTemplate, {prefCollection: senchaPrefs});
+        renderedTemplate = Mustache.render(modalTemplate, { prefCollection : senchaPrefs });
         dialog           = Dialogs.showModalDialogUsingTemplate(renderedTemplate);
         $element         = dialog.getElement();
         $saveButton      = $element.find('.save-button');

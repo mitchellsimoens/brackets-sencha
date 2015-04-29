@@ -10,6 +10,8 @@ Each time a command is executed, it will also find what version of Sencha Cmd th
 
 If you have multiple build targets in your app.json, you will be shown a build selector to run the command under.
 
+You can execute custom commands and save them.
+
 ## Sencha Fiddle
 
 Sencha Fiddle integration allows you to download a public Fiddle (by URL or Fiddle ID) and run it on your local web server using local versions of the Ext JS or Sencha Touch SDK that the Fiddle is using.

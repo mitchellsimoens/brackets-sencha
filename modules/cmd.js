@@ -406,7 +406,7 @@ define(function(require, exports) {
             },
             {
                 name     : 'sencha.cmd.user',
-                label    : 'Run custom script',
+                label    : 'Run custom command',
                 menu     : [
                     'PROJECT_MENU',
                     'WORKING_SET_CONTEXT_MENU'
@@ -477,7 +477,7 @@ define(function(require, exports) {
             },
             {
                 name     : 'sencha.cmd.user_editor',
-                label    : 'Run custom script',
+                label    : 'Run custom command',
                 menu     : [
                     'EDITOR_MENU'
                 ],
