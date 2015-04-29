@@ -11,6 +11,7 @@ define(function(require, exports) {
         FileSystem         = brackets.getModule('filesystem/FileSystem'),
         PreferencesManager = brackets.getModule('preferences/PreferencesManager'),
         prefs              = PreferencesManager.getExtensionPrefs('brackets-sencha'),
+        userCmds           = require('modules/cmd/usercmds'),
         _outputPanel, _command;
 
     function _getSenchaCfg(Dir, callback) {
@@ -402,6 +403,17 @@ define(function(require, exports) {
                 fn       : function() {
                     _handleCmdCommand('sencha app build testing', false, _selectBuild());
                 }
+            },
+            {
+                name     : 'sencha.cmd.user',
+                label    : 'Run custom script',
+                menu     : [
+                    'PROJECT_MENU',
+                    'WORKING_SET_CONTEXT_MENU'
+                ],
+                fn       : function() {
+                    _handleCmdCommand('', false, userCmds._getUserCmd());
+                }
             }
         ]);
 
@@ -461,6 +473,16 @@ define(function(require, exports) {
                 ],
                 fn       : function() {
                     _handleCmdCommand('sencha app build testing', true, _selectBuild());
+                }
+            },
+            {
+                name     : 'sencha.cmd.user_editor',
+                label    : 'Run custom script',
+                menu     : [
+                    'EDITOR_MENU'
+                ],
+                fn       : function() {
+                    _handleCmdCommand('', true, userCmds._getUserCmd());
                 }
             }
         ]);
