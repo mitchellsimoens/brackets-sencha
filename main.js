@@ -1,37 +1,27 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
 /*global define, $, brackets, window */
 
-define(function(require) {
+define(function(require, exports, module) {
     'use strict';
 
-    var PreferencesManager = brackets.getModule('preferences/PreferencesManager'),
-        prefs              = PreferencesManager.getExtensionPrefs('brackets-sencha'),
-        user               = brackets.app.getUserDocumentsDirectory();
+    var AppInit        = brackets.getModule('utils/AppInit'),
+        ExtensionUtils = brackets.getModule('utils/ExtensionUtils'),
+        SenchaDomain   = ExtensionUtils.getModulePath(module, 'lib/node/SenchaDomain');
 
-    var MenuManager = require('./modules/menumanager'),
-        OutputPanel = require('./modules/output').init({
-            MenuManager : MenuManager
-        }),
-        Command     = require('./modules/command').init({
-            MenuManager : MenuManager,
-            OutputPanel : OutputPanel
-        }),
-        Cmd         = require('./modules/cmd').init({
-            Command     : Command,
-            MenuManager : MenuManager,
-            OutputPanel : OutputPanel
-        }),
-        Fiddle      = require('./modules/fiddle').init({
-            Cmd         : Cmd,
-            Command     : Command,
-            MenuManager : MenuManager,
-            OutputPanel : OutputPanel
-        }),
-        Preferences      = require('./modules/preferences').init({
-            Cmd         : Cmd,
-            Command     : Command,
-            Fiddle      : Fiddle,
-            MenuManager : MenuManager,
-            OutputPanel : OutputPanel
-        });
+    require('./Sencha');
+
+    Sencha.require([
+        'Sencha.menu.Manager',
+        'Sencha.panel.Output',
+        'Sencha.node.Command',
+        'Sencha.cmd.Cmd',
+        'Sencha.fiddle.Fiddle',
+        'Sencha.panel.Preferences'
+    ]);
+
+    AppInit.appReady(function () {
+        Sencha.panel.Output.render();
+
+        Sencha.node.Command.initDomain(SenchaDomain);
+    });
 });
