@@ -13,10 +13,10 @@ define(function(require, exports, module) {
     Sencha.require([
         'Sencha.menu.Manager',
         'Sencha.panel.Preferences',
-        'Sencha.fiddle.Fiddle',
         'Sencha.panel.Output',
         'Sencha.node.Command',
-        'Sencha.cmd.Cmd'
+        'Sencha.cmd.Cmd',
+        'Sencha.fiddle.Fiddle'
     ]);
 
     AppInit.appReady(function () {
