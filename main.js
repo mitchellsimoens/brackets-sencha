@@ -8,15 +8,15 @@ define(function(require, exports, module) {
         ExtensionUtils = brackets.getModule('utils/ExtensionUtils'),
         SenchaDomain   = ExtensionUtils.getModulePath(module, 'lib/node/SenchaDomain');
 
-    require('./Sencha');
+    require('./lib/Sencha');
 
     Sencha.require([
         'Sencha.menu.Manager',
+        'Sencha.panel.Preferences',
+        'Sencha.fiddle.Fiddle',
         'Sencha.panel.Output',
         'Sencha.node.Command',
-        'Sencha.cmd.Cmd',
-        'Sencha.fiddle.Fiddle',
-        'Sencha.panel.Preferences'
+        'Sencha.cmd.Cmd'
     ]);
 
     AppInit.appReady(function () {
