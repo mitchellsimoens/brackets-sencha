@@ -1,6 +1,6 @@
 # brackets-sencha
 
-A Brackets extension for various Sencha integrations.
+A Brackets extension for various Sencha integrations developed with a custom class system internally that mimics the Ext JS class system.
 
 ## Sencha Cmd
 
