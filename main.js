@@ -2,8 +2,6 @@
 /*global define, $, brackets, window */
 
 define(function(require, exports, module) {
-    'use strict';
-
     var AppInit        = brackets.getModule('utils/AppInit'),
         ExtensionUtils = brackets.getModule('utils/ExtensionUtils'),
         SenchaDomain   = ExtensionUtils.getModulePath(module, 'lib/node/SenchaDomain');
