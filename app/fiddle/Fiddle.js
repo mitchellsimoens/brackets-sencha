@@ -9,7 +9,7 @@ var ProjectManager     = brackets.getModule('project/ProjectManager'),
     baseUrl            = 'https://fiddle.sencha.com/#fiddle/',
     baseExportUrl      = 'https://fiddle.sencha.com/export/'
     remoteRe           = /^((http|https):\/\/)/i, //makes sure name is a remote url
-    idRe               = new RegExp('(?:' + baseUrl + '){0,1}([a-z0-9]+)$', 'i'); //matches a fiddle id with or without the baseUrl
+    idRe               = new RegExp('^(?:' + baseUrl + ')?([a-z0-9]+)$', 'i'); //matches a fiddle id with or without the baseUrl
 
 //TODO use App.panel.Preferences instead of doing it here
 
