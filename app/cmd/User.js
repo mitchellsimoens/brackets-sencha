@@ -12,7 +12,7 @@ var PreferencesManager = brackets.getModule('preferences/PreferencesManager'),
  *
  * @class Sencha.cmd.User
  */
-Sencha.define('Sencha.cmd.User', {
+Sencha.define('App.cmd.User', {
     singleton : true,
 
     /**

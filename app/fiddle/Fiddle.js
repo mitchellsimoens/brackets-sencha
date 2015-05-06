@@ -6,26 +6,27 @@ var ProjectManager     = brackets.getModule('project/ProjectManager'),
     PreferencesManager = brackets.getModule('preferences/PreferencesManager'),
     Dialogs            = brackets.getModule('widgets/Dialogs'),
     prefs              = PreferencesManager.getExtensionPrefs('brackets-sencha'),
-    baseURL            = 'https://fiddle.sencha.com/#fiddle/',
-    shortRegex         = /^[a-z0-9]+$/i,
-    urlRegex           = /https:\/\/fiddle.sencha.com\/\#fiddle\/[a-z0-9]{+}$/i;
+    baseUrl            = 'https://fiddle.sencha.com/#fiddle/',
+    baseExportUrl      = 'https://fiddle.sencha.com/export/'
+    remoteRe           = /^((http|https):\/\/)/i, //makes sure name is a remote url
+    idRe               = new RegExp('(?:' + baseUrl + '){0,1}([a-z0-9]+)$', 'i'); //matches a fiddle id with or without the baseUrl
 
-//TODO use Sencha.panel.Preferences instead of doing it here
+//TODO use App.panel.Preferences instead of doing it here
 
 /**
  * Class to manage Fiddle.
  *
- * @class Sencha.fiddle.Fiddle
+ * @class App.fiddle.Fiddle
  */
-Sencha.define('Sencha.fiddle.Fiddle', {
+Sencha.define('App.fiddle.Fiddle', {
     singleton : true,
 
     requires : [
-        'Sencha.Template'
+        'App.Template'
     ],
 
     mixins : [
-        'Sencha.menu.Mixin'
+        'App.menu.Mixin'
     ],
 
     menus : [
@@ -82,9 +83,9 @@ Sencha.define('Sencha.fiddle.Fiddle', {
      * either a fiddle url or a fiddle id
      */
     validateFiddleURL : function() {
-        var url = $('.fiddle-url').val();
+        var url = $('.fiddle-url').val(); //TODO cache this el
 
-        return shortRegex.test(url) || urlRegex.test(url);
+        return idRe.test(url);
     },
 
     /**
@@ -107,7 +108,7 @@ Sencha.define('Sencha.fiddle.Fiddle', {
      */
     getFiddleURL : function(path) {
         var me               = this,
-            modalTemplate    = Sencha.Template.get('fiddle/downloadModal'),
+            modalTemplate    = App.Template.get('fiddle/downloadModal'),
             renderedTemplate = Mustache.render(modalTemplate, {
                 path : path
             }),
@@ -124,15 +125,13 @@ Sencha.define('Sencha.fiddle.Fiddle', {
         $urlField.on('keyup', me.toggleFiddleDownloadButton.bind(me));
 
         // on click, we have a valid value; download the fiddle
-        $downloadButton.on('click', function (e) {
-            var $fld     = $(this),
-                value    = $urlField.val(),
-                url      = value.length < 10 ? baseURL + value : value, //TODO the length thing, test the value see if uri
-                // convert url to the correct api version
-                finalUrl = url.replace('#fiddle', 'export');
+        $downloadButton.on('click', function(e) {
+            var value = $urlField.val(),
+                id    = value.match(idRe)[1],
+                url   = baseExportUrl + id;
 
             // do the business
-            me.downloadFiddleContent(path, finalUrl);
+            me.downloadFiddleContent(path, url);
         });
     },
 
@@ -273,7 +272,6 @@ Sencha.define('Sencha.fiddle.Fiddle', {
         var assets          = fiddle.assets,
             length          = assets.length,
             mockdata        = fiddle.mockdata,
-            urlregex        = /^((http|https):\/\/)/,
             rootPath        = path + (path.substr(-1) === '/' ? '' : '/') + fiddle.id + '/',
             i               = 0,
             doRemoteReplace = prefs.get('fiddle_replace_remote'),
@@ -290,7 +288,7 @@ Sencha.define('Sencha.fiddle.Fiddle', {
             asset = assets[i];
 
             // make sure that these are actual content, and not remote urls
-            if (!urlregex.test(asset.name)) {
+            if (!remoteRe.test(asset.name)) {
                 // replace index.html urls to use local ones
                 if (asset.name === 'index.html' && doRemoteReplace) {
                     asset.code = this.replaceRemoteUrls(asset.code, version)

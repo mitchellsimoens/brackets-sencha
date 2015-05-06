@@ -10,7 +10,7 @@ var CommandManager = brackets.getModule('command/CommandManager'),
  *
  * @class Sencha.menu.Manager
  */
-Sencha.define('Sencha.menu.Manager', {
+Sencha.define('App.menu.Manager', {
     singleton : true,
 
     registered : {},

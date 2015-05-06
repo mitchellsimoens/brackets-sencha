@@ -1,7 +1,7 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
 /*global Sencha, $, brackets, window */
 
-Sencha.define('Sencha.Template', {
+Sencha.define('App.Template', {
     singleton : true,
 
     templates : {},
@@ -13,7 +13,7 @@ Sencha.define('Sencha.Template', {
         if (!tpl) {
             tpl = templates[name] = Sencha.Loader.loadSyncXhr({
                 url : Sencha.modulePath + '../templates/' + name + '.html'
-            });
+            }).responseText;
         }
 
         return tpl;

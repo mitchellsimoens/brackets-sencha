@@ -10,17 +10,17 @@ var PreferencesManager = brackets.getModule('preferences/PreferencesManager'),
 /**
  * Class to manage preferences.
  *
- * @class Sencha.panel.Preferences
+ * @class App.panel.Preferences
  */
-Sencha.define('Sencha.panel.Preferences', {
+Sencha.define('App.panel.Preferences', {
     singleton : true,
 
     requires : [
-        'Sencha.Template'
+        'App.Template'
     ],
 
     mixins : [
-        'Sencha.menu.Mixin'
+        'App.menu.Mixin'
     ],
 
     // groups we want to track for preferences
@@ -223,7 +223,7 @@ Sencha.define('Sencha.panel.Preferences', {
      * Display user preferences for brackets-sencha
      */
     showPreferencesDialog : function() {
-        var modalTemplate = Sencha.Template.get('preferences/formModal'),
+        var modalTemplate = App.Template.get('preferences/formModal'),
             senchaPrefs   = [],
             groups        = {},
             prefsGroups   = this.prefsGroups,

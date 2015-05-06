@@ -5,22 +5,22 @@ var WorkspaceManager   = brackets.getModule('view/WorkspaceManager'),
     PreferencesManager = brackets.getModule('preferences/PreferencesManager'),
     prefs              = PreferencesManager.getExtensionPrefs('brackets-sencha');
 
-//TODO use Sencha.panel.Preferences
+//TODO use App.panel.Preferences
 
 /**
  * Class to manage the output panel.
  *
- * @class Sencha.panel.Output
+ * @class App.panel.Output
  */
-Sencha.define('Sencha.panel.Output', {
+Sencha.define('App.panel.Output', {
     singleton : true,
 
     requires : [
-        'Sencha.Template'
+        'App.Template'
     ],
 
     mixins : [
-        'Sencha.menu.Mixin'
+        'App.menu.Mixin'
     ],
 
     _panel    : null,
@@ -58,7 +58,7 @@ Sencha.define('Sencha.panel.Output', {
         if (!panel) {
             panel = this._panel = WorkspaceManager.createBottomPanel(
                 'sencha.cmd.output.panel',
-                $(Sencha.Template.get('output/outputPanel')),
+                $(App.Template.get('output/outputPanel')),
                 250
             );
         }
@@ -110,7 +110,7 @@ Sencha.define('Sencha.panel.Output', {
         var el = this.stopEl;
 
         if (!el.hasClass('disabled')) {
-            Sencha.node.Command.stop();
+            App.node.Command.stop();
         }
     },
 

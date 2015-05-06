@@ -8,14 +8,14 @@ var NodeDomain         = brackets.getModule('utils/NodeDomain'),
     isWin              = brackets.platform === 'win',
     shell              = isWin ? 'cmd.exe' : '/bin/bash';
 
-//TODO use Sencha.panel.Preferences
+//TODO use App.panel.Preferences
 
 /**
  * Class to execute commands on the node process
  *
- * @class Sencha.node.Command
+ * @class App.node.Command
  */
-Sencha.define('Sencha.node.Command', {
+Sencha.define('App.node.Command', {
     singleton : true,
 
     stopped : false,
@@ -23,11 +23,11 @@ Sencha.define('Sencha.node.Command', {
     construct : function(config) {
         this.callParent([config]);
 
-        $(ProjectManager).on('beforeAppClose', this.stop.bind(this));
+        ProjectManager.on('beforeAppClose', this.stop.bind(this));
     },
 
     execute : function(cmd, cwd, displayCmd) {
-        var output = Sencha.panel.Output,
+        var output = App.panel.Output,
             stopEl = output.stopEl;
 
         output.show();
@@ -60,7 +60,7 @@ Sencha.define('Sencha.node.Command', {
                 'senchaShellDomain',
                 path
             ),
-            _outputPanel = Sencha.panel.Output,
+            _outputPanel = App.panel.Output,
             _stopEl      = _outputPanel.stopEl;
 
         _domain.on('stdout', function(evt, data) {

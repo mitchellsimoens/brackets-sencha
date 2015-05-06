@@ -8,22 +8,22 @@ var ProjectManager     = brackets.getModule('project/ProjectManager'),
     PreferencesManager = brackets.getModule('preferences/PreferencesManager'),
     prefs              = PreferencesManager.getExtensionPrefs('brackets-sencha');
 
-//TODO use Sencha.panel.Preferences
+//TODO use App.panel.Preferences
 
 /**
  * Class to manage the Cmd integrations.
  *
- * @class Sencha.cmd.Cmd
+ * @class App.cmd.Cmd
  */
-Sencha.define('Sencha.cmd.Cmd', {
+Sencha.define('App.cmd.Cmd', {
     singleton : true,
 
     requires : [
-        'Sencha.cmd.User'
+        'App.cmd.User'
     ],
 
     mixins : [
-        'Sencha.menu.Mixin'
+        'App.menu.Mixin'
     ],
 
     menus : [
@@ -185,7 +185,7 @@ Sencha.define('Sencha.cmd.Cmd', {
     },
 
     onCustomCommand : function() {
-        this.handleCmdCommand('', false, Sencha.cmd.User.getUserCmd());
+        this.handleCmdCommand('', false, App.cmd.User.getUserCmd());
     },
 
     getSenchaCfg : function(Dir, callback) {
@@ -296,7 +296,7 @@ Sencha.define('Sencha.cmd.Cmd', {
                 var replace  = 'java -Xms128m -Xmx1024m -Dapple.awt.UIElement=true -jar ' + cmd_path + '.jar ',
                     real_cmd = cmd.replace(/sencha\s/g, replace);
 
-                Sencha.node.Command.execute(real_cmd, cwd, cmd);
+                App.node.Command.execute(real_cmd, cwd, cmd);
             }
         });
     },
@@ -380,7 +380,7 @@ Sencha.define('Sencha.cmd.Cmd', {
      * @return {Promise}
      */
     showAppBuildSelectionDialog : function(builds) {
-        var modalTemplate = Sencha.Template.get('cmd/buildSelectorModal'),
+        var modalTemplate = App.Template.get('cmd/buildSelectorModal'),
             buildArray    = [],
             deferred      = $.Deferred(),
             renderedTemplate,

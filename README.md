@@ -35,3 +35,5 @@ To manage your preferences, choose "Sencha Preferences..." from the context menu
    - `sencha package build`
    - `sencha package upgrade`
    - etc
+
+Usage stats: http://brackets.dnbard.com/extension/mitchellsimoens.brackets-sencha
