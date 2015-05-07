@@ -7,11 +7,12 @@ define(function(require) {
     var AppInit        = brackets.getModule('utils/AppInit'),
         ExtensionUtils = brackets.getModule('utils/ExtensionUtils'),
         appPath        = Sencha.modulePath + '../app/',
-        SenchaDomain   = appPath + 'node/SenchaDomain'
+        SenchaDomain   = appPath + 'node/SenchaDomain';
 
     Sencha.Loader.setPath('App', appPath);
 
     Sencha.require([
+        'Sencha.Format',
         'App.menu.Manager',
         'App.panel.Preferences',
         'App.panel.Output',
@@ -21,6 +22,10 @@ define(function(require) {
     ]);
 
     AppInit.appReady(function () {
+        App.node.Command.setAutolinker(
+            require('./Autolinker')
+        );
+
         App.panel.Output.render();
 
         App.node.Command.initDomain(SenchaDomain);

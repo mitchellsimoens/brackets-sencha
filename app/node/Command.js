@@ -18,9 +18,15 @@ var NodeDomain         = brackets.getModule('utils/NodeDomain'),
 Sencha.define('App.node.Command', {
     singleton : true,
 
+    config : {
+        autolinker : null
+    },
+
     stopped : false,
 
     construct : function(config) {
+        this.initConfig(config);
+
         this.callParent([config]);
 
         ProjectManager.on('beforeAppClose', this.stop.bind(this));
@@ -64,7 +70,11 @@ Sencha.define('App.node.Command', {
             _stopEl      = _outputPanel.stopEl;
 
         _domain.on('stdout', function(evt, data) {
-            _outputPanel.append(data);
+            data = me.linkify(data);
+
+            _outputPanel.append(data, {
+                tag : 'div'
+            });
         });
 
         _domain.on('stderr', function(evt, data) {
@@ -119,5 +129,17 @@ Sencha.define('App.node.Command', {
                 className : 'brackets-sencha-stopped'
             });
         });
+    },
+
+    linkify : function(text) {
+        var autolinker = this.getAutolinker();
+
+        if (autolinker) {
+            text = autolinker.link(text, {
+                stripPrefix : false
+            });
+        }
+
+        return text;
     }
 });
