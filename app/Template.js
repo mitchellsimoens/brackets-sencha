@@ -4,15 +4,23 @@
 Sencha.define('App.Template', {
     singleton : true,
 
-    templates : {},
+    config : {
+        templates : {},
+        tplPath   : null
+    },
+
+    construct : function(config) {
+        this.initConfig(config);
+        this.callParent([config]);
+    },
 
     get : function(name) {
-        var templates = this.templates,
+        var templates = this.getTemplates(),
             tpl       = templates[name];
 
         if (!tpl) {
             tpl = templates[name] = Sencha.Loader.loadSyncXhr({
-                url : Sencha.modulePath + '../templates/' + name + '.html'
+                url : this.getTplPath() + name + '.html'
             }).responseText;
         }
 
