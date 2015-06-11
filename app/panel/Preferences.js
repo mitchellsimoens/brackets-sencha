@@ -155,21 +155,19 @@ Sencha.define('App.panel.Preferences', {
      * @param {Event} e The click event from the save button
      */
     showPathSelector : function(e) {
-        var me      = this,
-            $button = $(me),
-            $fld    = $button.prev(),
-            deferred;
+        var me       = this,
+            $button  = $(e.target),
+            $field   = $button.prevAll('input'),
+            deferred = $.Deferred();
 
         e.preventDefault();
 
-        deferred = $.Deferred();
-
         deferred
             .then(function() {
-                return me.choosePath($fld.val());
+                return me.choosePath($field.val());
             })
             .done(function(dir) {
-                $fld.val(dir);
+                $field.val(dir);
             });
 
         deferred.resolve();
@@ -211,7 +209,7 @@ Sencha.define('App.panel.Preferences', {
     clearFieldValue : function(e) {
         var $button = $(this);
 
-        $button.prev().val('');
+        $button.prev('input').val('');
 
         e.preventDefault();
 
