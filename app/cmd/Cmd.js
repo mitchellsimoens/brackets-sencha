@@ -307,13 +307,10 @@ Sencha.define('App.cmd.Cmd', {
      * @return {Object}
      */
     getAppJsonAsObject : function(content) {
-        var cleanerRegex  = /(\/\*([\s\S]*?)\*\/)|(\/\/(.*)$)/gm,
-            convertedJson, cleaned;
+        var convertedJson;
 
         try {
-            // remove JS comments
-            cleaned       = content.replace(cleanerRegex, '');
-            convertedJson = JSON.parse(cleaned);
+            convertedJson = this.stripJsonComments(content);
         }
         catch(e) {
             convertedJson = {};
@@ -322,6 +319,72 @@ Sencha.define('App.cmd.Cmd', {
         }
 
         return convertedJson;
+    },
+
+    /**
+     * Strip comments from JSON.
+     *
+     * @param {String} json The JSON as a string.
+     * @return {Object} Returns an object if the JSON is not empty.
+     */
+    stripJsonComments : function(json) {
+        var ret           = '',
+            insideString  = false,
+            insideComment = false,
+            i             = 0,
+            length        = json.length,
+            currentChar, nextChar;
+
+        for (; i < length; i++) {
+            currentChar = json[i];
+            nextChar    = json[i + 1];
+
+            if (!insideComment && json[i - 1] !== '\\' && currentChar === '"') {
+                insideString = !insideString;
+            }
+
+            if (insideString) {
+                ret += currentChar;
+                continue;
+            }
+
+            if (!insideComment && currentChar + nextChar === '//') {
+                insideComment = 'single';
+
+                i++;
+            } else if (insideComment === 'single' && currentChar + nextChar === '\r\n') {
+                insideComment = false;
+
+                ret += currentChar;
+                ret += nextChar;
+
+                i++;
+
+                continue;
+            } else if (insideComment === 'single' && currentChar === '\n') {
+                insideComment = false;
+            } else if (!insideComment && currentChar + nextChar === '/*') {
+                insideComment = 'multi';
+
+                i++;
+
+                continue;
+            } else if (insideComment === 'multi' && currentChar + nextChar === '*/') {
+                insideComment = false;
+
+                i++;
+
+                continue;
+            }
+
+            if (insideComment) {
+                continue;
+            }
+
+            ret += currentChar;
+        }
+
+        return ret ? JSON.parse(ret) : ret;
     },
 
     /**
