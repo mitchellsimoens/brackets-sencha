@@ -421,7 +421,7 @@ Sencha.define('App.cmd.Cmd', {
                         builds['none (all)'] = null;
                     }
 
-                    return me.showAppBuildSelectionDialog(builds, options.inspector);
+                    return me.showAppBuildSelectionDialog(cmd, builds, options.inspector);
                 })
                 .done(function(build, inspector) {
                     if (inspector != null) {
@@ -452,11 +452,12 @@ Sencha.define('App.cmd.Cmd', {
     /**
      * Simple method which displays popup modal for selecting a build and optionally
      * connects it to Sencha Inspector.
+     * @param {String} cmd The command being executed
      * @param {Object} builds The available builds for the current app
      * @param {Boolean} [inspector=false] Show the inspector fields in dialog
      * @return {Promise}
      */
-    showAppBuildSelectionDialog : function(builds, inspector) {
+    showAppBuildSelectionDialog : function(cmd, builds, inspector) {
         var modalTemplate     = App.Template.get('cmd/buildSelectorModal'),
             buildArray        = [],
             deferred          = $.Deferred(),
@@ -479,7 +480,7 @@ Sencha.define('App.cmd.Cmd', {
             buildArray.push(key);
         }
 
-        renderedTemplate = Mustache.render(modalTemplate, { builds : buildArray, inspector : !!inspector, inspector_address : inspector_address });
+        renderedTemplate = Mustache.render(modalTemplate, { builds : buildArray, cmd : cmd, inspector : !!inspector, inspector_address : inspector_address });
         dialog           = Dialogs.showModalDialogUsingTemplate(renderedTemplate);
         $element         = dialog.getElement();
         $selectButton    = $element.find('.select-button');
