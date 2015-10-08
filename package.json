@@ -3,7 +3,7 @@
     "title": "Sencha",
     "description": "Extension to integrate Sencha products into Brackets.",
     "homepage": "https://github.com/mitchellsimoens/brackets-sencha",
-    "version": "0.2.5",
+    "version": "0.3.0",
     "author": {
         "name": "Mitchell Simoens",
         "email": "mitchellsimoens@gmail.com",
@@ -14,7 +14,7 @@
         "brackets": ">=0.24.0"
     },
     "keywords": [
-        "sencha", "cmd", "ext", "extjs", "touch", "fiddle"
+        "sencha", "cmd", "ext", "extjs", "touch", "fiddle", "inspector"
     ],
     "contributors": [
         {

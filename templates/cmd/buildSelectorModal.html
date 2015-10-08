@@ -5,11 +5,17 @@
     <div class="modal-body">
         <form>
             <div class="input-group">
+                <label for="build_name">Select Build:</label>
                 <select name="build_name" id="build_name" style="width:290px;" class="form-control">
                     {{#builds}}
                     <option value="{{.}}">{{.}}</option>
                     {{/builds}}
                 </select>
+
+                {{#inspector}}
+                <input type="checkbox" name="inspector" id="inspector" /> Sencha Inspector
+                <input type="text" name="inspector_address" id="inspector_address" disabled="disabled" placeholder="http://localhost:1839/" value="{{inspector_address}}" />
+                {{/inspector}}
             </div>
         </form>
     </div>

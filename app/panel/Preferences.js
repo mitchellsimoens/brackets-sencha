@@ -25,8 +25,9 @@ Sencha.define('App.panel.Preferences', {
 
     // groups we want to track for preferences
     prefsGroups : [
-        { name : 'cmd',      label : 'Sencha Cmd' },
-        { name : 'fiddle',   label : 'Fiddle'     }
+        { name : 'cmd',       label : 'Sencha Cmd'       },
+        { name : 'inspector', label : 'Sencha Inspector' },
+        { name : 'fiddle',    label : 'Fiddle'           }
     ],
 
     /**
@@ -51,40 +52,47 @@ Sencha.define('App.panel.Preferences', {
             editable  : true
         },
         'close_on_success'      : {
-            type    : 'boolean',
-            default : true,
-            group   : 'cmd',
-            label   : 'Close Output Panel on Success',
-            editable: true
+            type     : 'boolean',
+            default  : true,
+            group    : 'cmd',
+            label    : 'Close Output Panel on Success',
+            editable : true
+        },
+        'inspector_address'     : {
+            type     : 'string',
+            default  : 'http://localhost:1839/',
+            group    : 'inspector',
+            label    : 'Inspector Address',
+            editable : true
         },
         'user_cmds'             : {
-            type    : 'object',
-            default : {},
-            group   : 'cmd',
-            label   : 'User-defined Cmd Recipes',
-            editable: false
+            type     : 'object',
+            default  : {},
+            group    : 'cmd',
+            label    : 'User-defined Cmd Recipes',
+            editable : false
         },
         'fiddle_replace_remote' : {
-            type    : 'boolean',
-            default : true,
-            group   : 'fiddle',
-            label   : 'Replace Remote URIs With Local',
-            editable: true
+            type     : 'boolean',
+            default  : true,
+            group    : 'fiddle',
+            label    : 'Replace Remote URIs With Local',
+            editable : true
         },
         'fiddle_onready_wrap'   : {
-            type    : 'boolean',
-            default : true,
-            group   : 'fiddle',
-            label   : 'Wrap File Source in Ext.onReady',
-            editable: true
+            type     : 'boolean',
+            default  : true,
+            group    : 'fiddle',
+            label    : 'Wrap File Source in Ext.onReady',
+            editable : true
         },
         'sdk_tpl'               : {
-            type    : 'string',
-            default : 'http://localhost/sdk/{framework}/{full_version}',
-            group   : 'fiddle',
-            label   : 'SDK Url Template',
-            under   : 'Options:<ul><li>{framework}</li><li>{version}</li><li>{short_version}</li><li>{label}</li></ul>',
-            editable: true
+            type     : 'string',
+            default  : 'http://localhost/sdk/{framework}/{full_version}',
+            group    : 'fiddle',
+            label    : 'SDK Url Template',
+            under    : 'Options:<ul><li>{framework}</li><li>{version}</li><li>{short_version}</li><li>{label}</li></ul>',
+            editable : true
         }
     },
 

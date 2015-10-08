@@ -172,16 +172,17 @@ Sencha.define('App.cmd.Cmd', {
 
     onAppWatch : function() {
         this.handleCmdCommand('sencha app watch', false, this.selectBuild({
-            buildRequired : true
+            buildRequired : true,
+            inspector     : true
         }));
     },
 
     onAppBuildProd : function() {
-        this.handleCmdCommand('sencha app build production', false, this.selectBuild());
+        this.handleCmdCommand('sencha app build production', false);
     },
 
     onAppBuildTest : function() {
-        this.handleCmdCommand('sencha app build testing', false, this.selectBuild());
+        this.handleCmdCommand('sencha app build testing', false);
     },
 
     onCustomCommand : function() {
@@ -414,16 +415,27 @@ Sencha.define('App.cmd.Cmd', {
                     return me.findAppJson(dir);
                 })
                 .then(function(appJson){
-                    var builds = appJson.builds,
-                        show   = builds && Object.keys(builds).length > 1;
+                    var builds = appJson.builds;
 
-                    if (show && !options.buildRequired) {
+                    if (!options.buildRequired) {
                         builds['none (all)'] = null;
                     }
 
-                    return show ? me.showAppBuildSelectionDialog(builds) : '';
+                    return me.showAppBuildSelectionDialog(builds, options.inspector);
                 })
-                .done(function(build) {
+                .done(function(build, inspector) {
+                    if (inspector != null) {
+                        if (inspector) {
+                            cmd = cmd.split(' ');
+
+                            cmd.splice(1, 0, 'config --prop inspector.address=' + inspector + ' then');
+
+                            cmd = cmd.join(' ');
+                        }
+
+                        cmd += ' --inspector';
+                    }
+
                     if (build && build !== 'none (all)') {
                         // concat cmd with build option, if needed
                         cmd += ' ' + build;
@@ -438,35 +450,56 @@ Sencha.define('App.cmd.Cmd', {
     },
 
     /**
-     * Simple method which displays popup modal for selecting a build
+     * Simple method which displays popup modal for selecting a build and optionally
+     * connects it to Sencha Inspector.
      * @param {Object} builds The available builds for the current app
+     * @param {Boolean} [inspector=false] Show the inspector fields in dialog
      * @return {Promise}
      */
-    showAppBuildSelectionDialog : function(builds) {
-        var modalTemplate = App.Template.get('cmd/buildSelectorModal'),
-            buildArray    = [],
-            deferred      = $.Deferred(),
+    showAppBuildSelectionDialog : function(builds, inspector) {
+        var modalTemplate     = App.Template.get('cmd/buildSelectorModal'),
+            buildArray        = [],
+            deferred          = $.Deferred(),
+            inspector_address = inspector && prefs.get('inspector_address'),
             renderedTemplate,
             dialog,
             $element,
             $selectBuild,
             $selectButton,
+            $inspectorCheckbox,
+            $inspectorAddress,
             key;
 
+        if (inspector_address === 'http://localhost:1839/') {
+            inspector_address = null;
+        }
+
         // convert keys to array for mustache
-        for(key in builds) {
+        for (key in builds) {
             buildArray.push(key);
         }
 
-        renderedTemplate = Mustache.render(modalTemplate, { builds : buildArray });
+        renderedTemplate = Mustache.render(modalTemplate, { builds : buildArray, inspector : !!inspector, inspector_address : inspector_address });
         dialog           = Dialogs.showModalDialogUsingTemplate(renderedTemplate);
         $element         = dialog.getElement();
         $selectButton    = $element.find('.select-button');
         $selectBuild     = $element.find('#build_name');
 
+        if (inspector) {
+            $inspectorCheckbox = $element.find('#inspector');
+            $inspectorAddress  = $element.find('#inspector_address');
+
+            $inspectorCheckbox.on('click', function() {
+                $inspectorAddress.prop('disabled', !this.checked);
+            });
+        }
+
         // add event listeners to elements
-        $selectButton.on('click', function(){
-            deferred.resolve($selectBuild.val());
+        $selectButton.on('click', function() {
+            deferred.resolve(
+                $selectBuild.val(),
+                inspector && $inspectorCheckbox.prop('checked') ? $inspectorAddress.val() : null
+            );
         });
 
         return deferred.promise();
