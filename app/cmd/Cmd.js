@@ -328,20 +328,27 @@ Sencha.define('App.cmd.Cmd', {
      * @param {String} json The JSON as a string.
      * @return {Object} Returns an object if the JSON is not empty.
      */
-    stripJsonComments : function(json) {
-        var ret           = '',
+    stripJsonComments : function(str) {
+        var singleComment = 1,
+            multiComment  = 2,
             insideString  = false,
             insideComment = false,
+            ret           = '',
             i             = 0,
-            length        = json.length,
-            currentChar, nextChar;
+            length        = str.length,
+            nextChar, currentChar,
+            escaped;
 
         for (; i < length; i++) {
-            currentChar = json[i];
-            nextChar    = json[i + 1];
+            currentChar = str[i];
+            nextChar   = str[i + 1];
 
-            if (!insideComment && json[i - 1] !== '\\' && currentChar === '"') {
-                insideString = !insideString;
+            if (!insideComment && currentChar === '"') {
+                escaped = str[i - 1] === '\\' && str[i - 2] !== '\\';
+
+                if (!insideComment && !escaped && currentChar === '"') {
+                    insideString = !insideString;
+                }
             }
 
             if (insideString) {
@@ -350,31 +357,23 @@ Sencha.define('App.cmd.Cmd', {
             }
 
             if (!insideComment && currentChar + nextChar === '//') {
-                insideComment = 'single';
-
+                insideComment = singleComment;
                 i++;
-            } else if (insideComment === 'single' && currentChar + nextChar === '\r\n') {
+            } else if (insideComment === singleComment && currentChar + nextChar === '\r\n') {
                 insideComment = false;
-
+                i++;
                 ret += currentChar;
                 ret += nextChar;
-
-                i++;
-
                 continue;
-            } else if (insideComment === 'single' && currentChar === '\n') {
+            } else if (insideComment === singleComment && currentChar === '\n') {
                 insideComment = false;
             } else if (!insideComment && currentChar + nextChar === '/*') {
-                insideComment = 'multi';
-
+                insideComment = multiComment;
                 i++;
-
                 continue;
-            } else if (insideComment === 'multi' && currentChar + nextChar === '*/') {
+            } else if (insideComment === multiComment && currentChar + nextChar === '*/') {
                 insideComment = false;
-
                 i++;
-
                 continue;
             }
 
@@ -385,7 +384,7 @@ Sencha.define('App.cmd.Cmd', {
             ret += currentChar;
         }
 
-        return ret ? JSON.parse(ret) : ret;
+        return ret ? JSON.parse(ret) : {};
     },
 
     /**
